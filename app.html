@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cyber-Garage | App</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              cyber: '#00ffcc',
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+
+  <body
+    class="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white"
+  >
+    <!-- Top bar -->
+    <header
+      class="w-full px-6 py-4 flex items-center justify-between border-b border-gray-800 bg-black/40 backdrop-blur"
+    >
+      <h1 class="text-xl font-bold text-cyber">Cyber-Garage</h1>
+
+      <button
+        id="logoutBtn"
+        class="px-4 py-2 rounded-lg bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30 transition active:scale-95"
+      >
+        Cerrar sesión
+      </button>
+    </header>
+
+    <!-- Main -->
+    <main class="p-6 max-w-6xl mx-auto">
+      <h2 class="text-3xl font-semibold mb-2">Bienvenido 👋</h2>
+
+      <p class="text-gray-400 mb-8">Panel principal de Cyber-Garage</p>
+
+      <!-- Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div
+          class="bg-gray-900/80 border border-gray-800 rounded-2xl p-6 shadow-lg"
+        >
+          <h3 class="text-lg font-semibold mb-2 text-cyber">Estado</h3>
+          <p class="text-gray-400">Sistema operativo</p>
+        </div>
+
+        <div
+          class="bg-gray-900/80 border border-gray-800 rounded-2xl p-6 shadow-lg"
+        >
+          <h3 class="text-lg font-semibold mb-2 text-cyber">Usuarios</h3>
+          <p class="text-gray-400">Accesos activos</p>
+        </div>
+
+        <div
+          class="bg-gray-900/80 border border-gray-800 rounded-2xl p-6 shadow-lg"
+        >
+          <h3 class="text-lg font-semibold mb-2 text-cyber">Configuración</h3>
+          <p class="text-gray-400">Opciones del sistema</p>
+        </div>
+      </div>
+    </main>
+
+    <!-- JS -->
+    <script type="module">
+      import { protectPage, setupLogout } from './js/auth.js';
+
+      // 🔒 proteger acceso
+      protectPage();
+
+      // 🚪 logout
+      setupLogout('logoutBtn');
+    </script>
+  </body>
+</html>
