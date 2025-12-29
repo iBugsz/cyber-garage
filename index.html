@@ -1,78 +1,86 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cyber-Garage | Login</title>
-    <link rel="icon" type="image/png" href="./favicon/favicon.png" />
-    <!-- Tailwind CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Config opcional -->
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: {
-              cyber: '#00ffcc',
-            },
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cyber-Garage | Login</title>
+  <link rel="icon" type="image/png" href="./favicon/favicon.png" />
+  
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cyberBlue: '#00ffff',
+            cyberPink: '#ff00ff',
+            darkCard: '#0a0a0a',
+            neonText: '#00ffcc'
+          },
+          fontFamily: {
+            techno: ['"Orbitron"', 'sans-serif'],
           },
         },
-      };
-    </script>
-  </head>
+      },
+    };
+  </script>
 
-  <body
-    class="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center text-white"
-  >
-    <!-- Card -->
-    <div
-      class="w-full max-w-sm bg-gray-900/80 backdrop-blur rounded-2xl shadow-xl p-8 border border-gray-800"
-    >
-      <h1 class="text-3xl font-bold text-center mb-6 text-cyber">
-        Cyber-Garage
-      </h1>
+  <!-- Fuente futurista -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="min-h-screen bg-black flex items-center justify-center font-techno relative overflow-hidden">
 
-      <p class="text-center text-gray-400 mb-8">Inicia sesión para continuar</p>
+  <!-- Fondo con gradiente agresivo -->
+  <div class="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black"></div>
+  <div class="absolute inset-0 bg-gradient-to-t from-cyberBlue/10 via-cyberPink/10 to-cyberBlue/10 animate-pulse"></div>
 
-      <!-- Email -->
-      <div class="mb-4">
-        <input
-          type="email"
-          id="email"
-          placeholder="Correo electrónico"
-          class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-cyber"
-        />
-      </div>
+  <!-- Card -->
+  <div class="relative w-full max-w-sm bg-darkCard/95 rounded-3xl shadow-2xl border border-gray-800 p-10 flex flex-col items-center">
+    <!-- Logo -->
+    <h1 class="text-4xl font-bold mb-4 text-cyberBlue drop-shadow-lg">Cyber-Garage</h1>
+    <p class="text-gray-400 text-center mb-8 italic">⚡ Inicia sesión para acelerar tu experiencia</p>
 
-      <!-- Password -->
-      <div class="mb-6">
-        <input
-          type="password"
-          id="password"
-          placeholder="Contraseña"
-          class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-cyber"
-        />
-      </div>
+    <!-- Email -->
+    <input type="email" id="email" placeholder="Correo electrónico"
+      class="w-full mb-4 px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-cyberBlue"
+    />
 
-      <!-- Button -->
-      <button
-        id="loginBtn"
-        class="w-full py-3 rounded-lg bg-cyber text-black font-semibold hover:bg-teal-300 transition-all duration-200 active:scale-95"
-      >
-        Entrar 🚀
-      </button>
-
-      <p
-        id="errorMsg"
-        class="hidden mt-4 text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-2"
-      ></p>
-
-      <!-- Footer -->
-      <p class="text-center text-xs text-gray-500 mt-6">© 2025 Cyber-Garage</p>
+    <!-- Password con toggle -->
+    <div class="w-full relative mb-6">
+      <input type="password" id="password" placeholder="Contraseña"
+        class="w-full px-4 py-3 rounded-lg bg-gray-800 border border-gray-700 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-cyberPink pr-10"
+      />
+      <button type="button" id="togglePass"
+        class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-cyberPink"
+      >👁️</button>
     </div>
 
-    <!-- JS -->
-    <script type="module" src="js/login.js"></script>
-  </body>
+    <!-- Button -->
+    <button id="loginBtn"
+      class="w-full py-3 mb-4 rounded-lg bg-gradient-to-r from-cyberBlue to-cyberPink text-black font-bold hover:scale-105 hover:shadow-lg transition-all duration-200 active:scale-95"
+    >Entrar 🚀</button>
+
+    <!-- Error -->
+    <p id="errorMsg" class="hidden text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-2 w-full text-center"></p>
+
+    <!-- Footer -->
+    <p class="text-xs text-gray-500 mt-6">© 2025 Cyber-Garage</p>
+  </div>
+
+  <!-- JS -->
+  <script type="module">
+    const toggleBtn = document.getElementById('togglePass');
+    const passwordInput = document.getElementById('password');
+    toggleBtn.addEventListener('click', () => {
+      if(passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        toggleBtn.textContent = '🙈';
+      } else {
+        passwordInput.type = 'password';
+        toggleBtn.textContent = '👁️';
+      }
+    });
+  </script>
+</body>
 </html>
