@@ -26,6 +26,9 @@
         },
       };
     </script>
+
+    <!-- SheetJS (leer Excel) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   </head>
 
   <body class="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
@@ -74,48 +77,34 @@
           </p>
 
           <button
-            onclick="document.getElementById('fileInput').click()"
+            id="selectFileBtn"
             class="px-6 py-3 rounded-lg bg-cyber text-black font-semibold hover:bg-teal-300 transition active:scale-95"
           >
             Elegir archivo
           </button>
 
-          <p id="fileName" class="mt-4 text-sm text-gray-500"></p>
+          <p id="fileName" class="mt-4 text-sm text-gray-300"></p>
+          <p id="fileStatus" class="mt-2 text-sm text-gray-400"></p>
         </div>
       </section>
 
-      <!-- Files list -->
+      <!-- Estado interno -->
       <section
         class="bg-gray-900/80 border border-gray-800 rounded-2xl p-6 shadow-lg"
       >
         <h3 class="text-xl font-semibold text-cyber mb-4">
-          Archivos cargados
+          Estado del archivo
         </h3>
 
-        <div class="overflow-x-auto">
-          <table class="w-full text-sm text-left">
-            <thead class="text-gray-400 border-b border-gray-800">
-              <tr>
-                <th class="py-3">Nombre</th>
-                <th class="py-3">Tipo</th>
-                <th class="py-3">Fecha</th>
-                <th class="py-3 text-right">Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="filesTable" class="text-gray-300">
-              <tr class="border-b border-gray-800">
-                <td class="py-4">revision_motor.xlsx</td>
-                <td>Excel</td>
-                <td>2025-01-10</td>
-                <td class="text-right">
-                  <button class="text-cyber hover:underline mr-3">Ver</button>
-                  <button class="text-red-400 hover:underline">Eliminar</button>
-                </td>
-              </tr>
-              <!-- aquí luego van los archivos reales -->
-            </tbody>
-          </table>
-        </div>
+        <p class="text-gray-400">
+          Excel cargado en memoria:
+          <span id="memoryState" class="text-red-400 font-semibold">NO</span>
+        </p>
+
+        <p class="text-gray-400 mt-2">
+          Filas detectadas:
+          <span id="rowCount" class="text-cyber font-semibold">0</span>
+        </p>
       </section>
     </main>
 
@@ -126,15 +115,59 @@
       protectPage();
       setupLogout('logoutBtn');
 
-      // Mostrar nombre del archivo seleccionado
       const fileInput = document.getElementById('fileInput');
       const fileName = document.getElementById('fileName');
+      const fileStatus = document.getElementById('fileStatus');
+      const memoryState = document.getElementById('memoryState');
+      const rowCount = document.getElementById('rowCount');
 
-      fileInput.addEventListener('change', () => {
-        if (fileInput.files.length > 0) {
-          fileName.textContent = `Archivo seleccionado: ${fileInput.files[0].name}`;
+      document.getElementById('selectFileBtn').onclick = () => {
+        fileInput.click();
+      };
+
+      // === MEMORIA GLOBAL ===
+      let excelWorkbook = null;
+      let excelData = null;
+
+      fileInput.addEventListener('change', async () => {
+        if (!fileInput.files.length) return;
+
+        const file = fileInput.files[0];
+        fileName.textContent = `📄 ${file.name}`;
+        fileStatus.textContent = '⏳ Cargando archivo en memoria...';
+
+        memoryState.textContent = 'NO';
+        memoryState.className = 'text-red-400 font-semibold';
+
+        try {
+          const buffer = await file.arrayBuffer();
+
+          excelWorkbook = XLSX.read(buffer, { type: 'array' });
+          const sheetName = excelWorkbook.SheetNames[0];
+          const sheet = excelWorkbook.Sheets[sheetName];
+
+          excelData = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+
+          // UI feedback
+          fileStatus.innerHTML = `
+            ✅ Archivo cargado correctamente<br>
+            📄 Hoja: <span class="text-cyber">${sheetName}</span>
+          `;
+
+          memoryState.textContent = 'SÍ';
+          memoryState.className = 'text-green-400 font-semibold';
+
+          rowCount.textContent = excelData.length;
+
+          console.log('Excel en memoria:', excelData);
+        } catch (err) {
+          console.error(err);
+          fileStatus.textContent = '❌ Error al cargar el archivo';
         }
       });
+
+      // EJEMPLO DE USO FUTURO (ya funciona)
+      window.getExcelData = () => excelData;
     </script>
   </body>
 </html>
