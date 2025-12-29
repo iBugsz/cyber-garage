@@ -5,7 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cyber-Garage | App</title>
 
-    <!-- Tailwind CDN -->
+    <!-- Favicon -->
+    <link
+      rel="icon"
+      type="image/png"
+      href="https://cdn-icons-png.flaticon.com/512/743/743131.png"
+    />
+
+    <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <script>
@@ -21,9 +28,7 @@
     </script>
   </head>
 
-  <body
-    class="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white"
-  >
+  <body class="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
     <!-- Top bar -->
     <header
       class="w-full px-6 py-4 flex items-center justify-between border-b border-gray-800 bg-black/40 backdrop-blur"
@@ -40,44 +45,96 @@
 
     <!-- Main -->
     <main class="p-6 max-w-6xl mx-auto">
-      <h2 class="text-3xl font-semibold mb-2">Bienvenido 👋</h2>
+      <h2 class="text-3xl font-semibold mb-1">Panel de archivos 📂</h2>
+      <p class="text-gray-400 mb-8">
+        Aquí puedes subir y gestionar archivos de revisión (Excel)
+      </p>
 
-      <p class="text-gray-400 mb-8">Panel principal de Cyber-Garage</p>
-
-      <!-- Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div
-          class="bg-gray-900/80 border border-gray-800 rounded-2xl p-6 shadow-lg"
-        >
-          <h3 class="text-lg font-semibold mb-2 text-cyber">Estado</h3>
-          <p class="text-gray-400">Sistema operativo</p>
-        </div>
-
-        <div
-          class="bg-gray-900/80 border border-gray-800 rounded-2xl p-6 shadow-lg"
-        >
-          <h3 class="text-lg font-semibold mb-2 text-cyber">Usuarios</h3>
-          <p class="text-gray-400">Accesos activos</p>
-        </div>
+      <!-- Upload section -->
+      <section
+        class="bg-gray-900/80 border border-gray-800 rounded-2xl p-8 shadow-lg mb-10"
+      >
+        <h3 class="text-xl font-semibold text-cyber mb-4">
+          Subir archivo Excel
+        </h3>
 
         <div
-          class="bg-gray-900/80 border border-gray-800 rounded-2xl p-6 shadow-lg"
+          class="border-2 border-dashed border-gray-700 rounded-xl p-8 text-center hover:border-cyber transition"
         >
-          <h3 class="text-lg font-semibold mb-2 text-cyber">Configuración</h3>
-          <p class="text-gray-400">Opciones del sistema</p>
+          <input
+            type="file"
+            id="fileInput"
+            accept=".xls,.xlsx"
+            class="hidden"
+          />
+
+          <p class="text-gray-400 mb-4">
+            Selecciona un archivo <span class="text-cyber">.xls</span> o
+            <span class="text-cyber">.xlsx</span>
+          </p>
+
+          <button
+            onclick="document.getElementById('fileInput').click()"
+            class="px-6 py-3 rounded-lg bg-cyber text-black font-semibold hover:bg-teal-300 transition active:scale-95"
+          >
+            Elegir archivo
+          </button>
+
+          <p id="fileName" class="mt-4 text-sm text-gray-500"></p>
         </div>
-      </div>
+      </section>
+
+      <!-- Files list -->
+      <section
+        class="bg-gray-900/80 border border-gray-800 rounded-2xl p-6 shadow-lg"
+      >
+        <h3 class="text-xl font-semibold text-cyber mb-4">
+          Archivos cargados
+        </h3>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left">
+            <thead class="text-gray-400 border-b border-gray-800">
+              <tr>
+                <th class="py-3">Nombre</th>
+                <th class="py-3">Tipo</th>
+                <th class="py-3">Fecha</th>
+                <th class="py-3 text-right">Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="filesTable" class="text-gray-300">
+              <tr class="border-b border-gray-800">
+                <td class="py-4">revision_motor.xlsx</td>
+                <td>Excel</td>
+                <td>2025-01-10</td>
+                <td class="text-right">
+                  <button class="text-cyber hover:underline mr-3">Ver</button>
+                  <button class="text-red-400 hover:underline">Eliminar</button>
+                </td>
+              </tr>
+              <!-- aquí luego van los archivos reales -->
+            </tbody>
+          </table>
+        </div>
+      </section>
     </main>
 
     <!-- JS -->
     <script type="module">
       import { protectPage, setupLogout } from './js/auth.js';
 
-      // 🔒 proteger acceso
       protectPage();
-
-      // 🚪 logout
       setupLogout('logoutBtn');
+
+      // Mostrar nombre del archivo seleccionado
+      const fileInput = document.getElementById('fileInput');
+      const fileName = document.getElementById('fileName');
+
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files.length > 0) {
+          fileName.textContent = `Archivo seleccionado: ${fileInput.files[0].name}`;
+        }
+      });
     </script>
   </body>
 </html>
