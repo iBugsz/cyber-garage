@@ -1,24 +1,44 @@
-import { signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+import { 
+  signInWithEmailAndPassword, 
+  setPersistence, 
+  browserLocalPersistence, 
+  onAuthStateChanged 
+} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
 import { auth } from './firebase.js';
 
 const loginBtn = document.getElementById('loginBtn');
 const errorMsg = document.getElementById('errorMsg');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
 
+// ⚡ Mantener sesión iniciada incluso al cerrar la página
+setPersistence(auth, browserLocalPersistence)
+  .catch(error => console.error('Error persistencia:', error));
+
+// Redirigir automáticamente si ya hay sesión activa
+onAuthStateChanged(auth, user => {
+  if (user) {
+    // Usuario ya logueado
+    window.location.href = 'app.html';
+  }
+});
+
+// Login
 loginBtn.addEventListener('click', () => {
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value.trim();
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
 
-  // Validación rápida (antes de Firebase)
+  // Validación rápida
   if (!email || !password) {
     showError('Completa todos los campos');
     return;
   }
 
-  // Limpia error previo
   hideError();
 
   signInWithEmailAndPassword(auth, email, password)
     .then(() => {
+      // Sesión iniciada correctamente
       window.location.href = 'app.html';
     })
     .catch((error) => {
@@ -58,5 +78,5 @@ function hideError() {
 }
 
 // Ocultar error al escribir
-document.getElementById('email').addEventListener('input', hideError);
-document.getElementById('password').addEventListener('input', hideError);
+emailInput.addEventListener('input', hideError);
+passwordInput.addEventListener('input', hideError);
