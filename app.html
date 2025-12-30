@@ -1,92 +1,138 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cyber-Garage | App</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cyber-Garage | App</title>
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="./favicon/favicon.png" />
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="./favicon/favicon.png" />
 
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            cyber: '#00ffcc',
+<style>
+  .drag-active {
+    border-color: #00ffcc !important;
+    box-shadow: 0 0 25px rgba(0, 255, 204, 0.4);
+    transform: scale(1.03);
+    background: rgba(0, 255, 204, 0.05);
+  }
+</style>
+
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              cyber: "#00ffcc",
+            },
           },
         },
-      },
-    };
-  </script>
+      };
+    </script>
 
-  <!-- SheetJS (leer Excel) -->
-  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-</head>
+    <!-- SheetJS (leer Excel) -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+  </head>
 
-<body class="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
-  <!-- Top bar -->
-  <header class="w-full px-6 py-4 flex items-center justify-between border-b border-gray-800 bg-black/40 backdrop-blur">
-    <h1 class="text-xl font-bold text-cyber">Cyber-Garage</h1>
-    <button id="logoutBtn" class="px-4 py-2 rounded-lg bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30 transition active:scale-95">
-      Cerrar sesión
-    </button>
-  </header>
+  <body
+    class="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white"
+  >
+    <!-- Top bar -->
+    <header
+      class="w-full px-6 py-4 flex items-center justify-between border-b border-gray-800 bg-black/40 backdrop-blur"
+    >
+      <h1 class="text-xl font-bold text-cyber">Cyber-Garage</h1>
+      <button
+        id="logoutBtn"
+        class="px-4 py-2 rounded-lg bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30 transition active:scale-95"
+      >
+        Cerrar sesión
+      </button>
+    </header>
 
-  <!-- Main -->
-  <main class="p-6 max-w-6xl mx-auto">
-
-    <!-- Panel de archivos -->
-    <section class="mb-10">
-      <h2 class="text-3xl font-semibold mb-1">Panel de archivos 📂</h2>
-      <p class="text-gray-400 mb-4">Aquí puedes subir y gestionar archivos de revisión (Excel)</p>
-    </section>
-
-    <!-- Upload section -->
-    <section class="bg-gray-900/80 border border-gray-800 rounded-2xl p-8 shadow-lg mb-10">
-      <h3 class="text-xl font-semibold text-cyber mb-4">Subir archivo Excel</h3>
-
-      <div id="dropArea" class="border-2 border-dashed border-gray-700 rounded-xl p-8 text-center hover:border-cyber cursor-pointer transition">
-
-        <input type="file" id="fileInput" accept=".xls,.xlsx" class="hidden" />
-
+    <!-- Main -->
+    <main class="p-6 max-w-6xl mx-auto">
+      <!-- Panel de archivos -->
+      <section class="mb-10">
+        <h2 class="text-3xl font-semibold mb-1">Panel de archivos 📂</h2>
         <p class="text-gray-400 mb-4">
-          Selecciona un archivo <span class="text-cyber">.xls</span> o <span class="text-cyber">.xlsx</span>
+          Aquí puedes subir y gestionar archivos de revisión (Excel)
         </p>
+      </section>
 
-        <button id="selectFileBtn" class="px-6 py-3 rounded-lg bg-cyber text-black font-semibold hover:bg-teal-300 transition active:scale-95">
-          Elegir archivo
-        </button>
+      <!-- Upload section -->
+      <section
+        class="bg-gray-900/80 border border-gray-800 rounded-2xl p-8 shadow-lg mb-10"
+      >
+        <h3 class="text-xl font-semibold text-cyber mb-4">
+          Subir archivo Excel
+        </h3>
 
-        <p id="fileName" class="mt-4 text-sm text-gray-300"></p>
-        <p id="fileStatus" class="mt-2 text-sm text-gray-400"></p>
+        <div
+          id="dropArea"
+          class="border-2 border-dashed border-gray-700 rounded-xl p-8 text-center hover:border-cyber cursor-pointer transition-all duration-300 relative"
+        >
+          <input
+            type="file"
+            id="fileInput"
+            accept=".xls,.xlsx"
+            class="hidden"
+          />
 
-        <!-- Spinner -->
-        <div id="loadingSpinner" class="hidden mt-2">
-          <span class="animate-spin inline-block w-5 h-5 border-2 border-cyber border-t-transparent rounded-full"></span>
-          <span class="ml-2 text-gray-400 text-sm">Cargando...</span>
+          <p class="text-gray-400 mb-4">
+            Selecciona un archivo <span class="text-cyber">.xls</span> o
+            <span class="text-cyber">.xlsx</span>
+          </p>
+
+          <button
+            id="selectFileBtn"
+            class="px-6 py-3 rounded-lg bg-cyber text-black font-semibold hover:bg-teal-300 transition active:scale-95"
+          >
+            Elegir archivo
+          </button>
+
+          <p id="fileName" class="mt-4 text-sm text-gray-300"></p>
+          <p id="fileStatus" class="mt-2 text-sm text-gray-400"></p>
+
+          <!-- Spinner -->
+          <div id="loadingSpinner" class="hidden mt-2">
+            <span
+              class="animate-spin inline-block w-5 h-5 border-2 border-cyber border-t-transparent rounded-full"
+            ></span>
+            <span class="ml-2 text-gray-400 text-sm">Cargando...</span>
+          </div>
+
+          <!-- Botón quitar archivo -->
+          <button
+            id="clearFileBtn"
+            class="mt-2 px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition active:scale-95 hidden"
+          >
+            ❌ Quitar archivo
+          </button>
         </div>
+      </section>
 
-        <!-- Botón quitar archivo -->
-        <button id="clearFileBtn" class="mt-2 px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition active:scale-95 hidden">
-          ❌ Quitar archivo
-        </button>
+      <!-- Estado interno -->
+      <section
+        class="bg-gray-900/80 border border-gray-800 rounded-2xl p-6 shadow-lg"
+      >
+        <h3 class="text-xl font-semibold text-cyber mb-4">
+          Estado del archivo
+        </h3>
+        <p class="text-gray-400">
+          Excel cargado en memoria:
+          <span id="memoryState" class="text-red-400 font-semibold">NO</span>
+        </p>
+        <p class="text-gray-400 mt-2">
+          Filas detectadas:
+          <span id="rowCount" class="text-cyber font-semibold">0</span>
+        </p>
+      </section>
+    </main>
 
-      </div>
-    </section>
-
-    <!-- Estado interno -->
-    <section class="bg-gray-900/80 border border-gray-800 rounded-2xl p-6 shadow-lg">
-      <h3 class="text-xl font-semibold text-cyber mb-4">Estado del archivo</h3>
-      <p class="text-gray-400">Excel cargado en memoria: <span id="memoryState" class="text-red-400 font-semibold">NO</span></p>
-      <p class="text-gray-400 mt-2">Filas detectadas: <span id="rowCount" class="text-cyber font-semibold">0</span></p>
-    </section>
-
-  </main>
-
-  <!-- JS -->
-  <script type="module" src="./js/app.js"></script>
-</body>
+    <!-- JS -->
+    <script type="module" src="./js/app.js"></script>
+  </body>
 </html>

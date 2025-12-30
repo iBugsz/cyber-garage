@@ -26,33 +26,38 @@ selectBtn.onclick = () => fileInput.click();
 fileInput.addEventListener('change', handleFile);
 
 // Drag & Drop refinado
+let dragCounter = 0;
+
 dropArea.addEventListener('dragenter', (e) => {
   e.preventDefault();
-  dropArea.classList.add('border-cyber');
+  dragCounter++;
+  dropArea.classList.add('drag-active');
 });
 
 dropArea.addEventListener('dragover', (e) => {
   e.preventDefault();
-  dropArea.classList.add('border-cyber');
 });
 
 dropArea.addEventListener('dragleave', (e) => {
   e.preventDefault();
-  // Solo quitar borde si realmente sale del área
-  if (!dropArea.contains(e.relatedTarget)) {
-    dropArea.classList.remove('border-cyber');
+  dragCounter--;
+  if (dragCounter === 0) {
+    dropArea.classList.remove('drag-active');
   }
 });
 
 dropArea.addEventListener('drop', (e) => {
   e.preventDefault();
-  dropArea.classList.remove('border-cyber');
+  dragCounter = 0;
+  dropArea.classList.remove('drag-active');
 
-  const dt = e.dataTransfer;
-  if (!dt.files.length) return;
-  fileInput.files = dt.files;
+  const files = e.dataTransfer.files;
+  if (!files.length) return;
+
+  fileInput.files = files;
   handleFile();
 });
+
 
 // Quitar archivo
 clearBtn.addEventListener('click', () => {
