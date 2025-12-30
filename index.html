@@ -4,7 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cyber-Garage | Login</title>
+
+  <!-- Favicon -->
   <link rel="icon" type="image/png" href="./favicon/favicon.png" />
+
+  <!-- CSS propio -->
+  <link rel="stylesheet" href="css/style.css">
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -27,65 +32,89 @@
       },
     };
   </script>
-  <style>
-/* Quitar fondo blanco del autofill (Chrome, Edge, Brave) */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px #1f2937 inset !important; /* bg-gray-800 */
-  -webkit-text-fill-color: #ffffff !important;
-  caret-color: #ffffff;
-  transition: background-color 9999s ease-in-out 0s;
-}
-</style>
 
-
+  <!-- Fuente -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
+
 <body class="min-h-screen bg-black flex items-center justify-center font-techno relative overflow-hidden">
 
-  <!-- Fondo dinámico -->
-  <div class="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black animate-pulse-slow"></div>
+  <!-- 🎥 Canvas de fondo -->
+  <canvas
+    id="bgCanvas"
+    class="fixed inset-0 w-full h-full -z-10"
+  ></canvas>
+
+  <!-- Overlay oscuro sutil -->
+  <div class="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black opacity-70 pointer-events-none"></div>
 
   <!-- Card -->
-  <div class="relative w-full max-w-sm bg-darkCard/95 rounded-xl-wave shadow-2xl border border-gray-800 p-10 flex flex-col items-center backdrop-blur-sm hover:scale-[1.02] transition-transform duration-300">
+  <div class="relative z-10 w-full max-w-sm bg-darkCard/95 rounded-xl-wave shadow-2xl border border-gray-800 p-10 flex flex-col items-center backdrop-blur-sm hover:scale-[1.02] transition-transform duration-300">
     
-    <h1 class="text-4xl font-bold mb-4 text-cyberBlue drop-shadow-lg">Cyber-Garage</h1>
-    <p class="text-gray-400 text-center mb-8 italic">⚡ Inicia sesión para acelerar tu experiencia</p>
+    <h1 class="text-4xl font-bold mb-4 text-cyberBlue drop-shadow-lg">
+      Cyber-Garage
+    </h1>
+
+    <p class="text-gray-400 text-center mb-8 italic">
+      ⚡ Inicia sesión para acelerar tu experiencia
+    </p>
 
     <!-- Email -->
-    <input type="email" id="email" placeholder="Correo electrónico"
+    <input
+      type="email"
+      id="email"
+      placeholder="Correo electrónico"
       class="w-full mb-4 px-5 py-3 rounded-3xl bg-gray-800 border border-gray-700 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-cyberBlue transition-all"
     />
 
     <!-- Password -->
     <div class="w-full relative mb-6">
-      <input type="password" id="password" placeholder="Contraseña"
+      <input
+        type="password"
+        id="password"
+        placeholder="Contraseña"
         class="w-full px-5 py-3 rounded-3xl bg-gray-800 border border-gray-700 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-cyberPink pr-12 transition-all"
       />
-      <button type="button" id="togglePass" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-cyberPink">👁️</button>
+      <button
+        type="button"
+        id="togglePass"
+        class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-cyberPink"
+      >
+        👁️
+      </button>
     </div>
 
     <!-- Button -->
-    <button id="loginBtn"
+    <button
+      id="loginBtn"
       class="w-full py-3 mb-4 rounded-3xl bg-gradient-to-r from-cyberBlue to-cyberPink text-black font-bold hover:scale-105 hover:shadow-lg transition-all duration-200 active:scale-95"
-    >Entrar 🚀</button>
+    >
+      Entrar 🚀
+    </button>
 
-    <p id="errorMsg" class="hidden text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-2 w-full text-center"></p>
+    <p
+      id="errorMsg"
+      class="hidden text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-2 w-full text-center"
+    ></p>
 
-    <p class="text-xs text-gray-500 mt-6">© 2025 Cyber-Garage</p>
+    <p class="text-xs text-gray-500 mt-6">
+      © 2025 Cyber-Garage
+    </p>
   </div>
 
-  <!-- JS -->
+  <!-- JS Login -->
   <script type="module" src="js/login.js"></script>
+
+  <!-- JS Fondo animado -->
+  <script src="js/bg-animation.js"></script>
 
   <!-- Toggle password -->
   <script>
     const toggleBtn = document.getElementById('togglePass');
     const passwordInput = document.getElementById('password');
+
     toggleBtn.addEventListener('click', () => {
-      if(passwordInput.type === 'password'){
+      if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
         toggleBtn.textContent = '🙈';
       } else {
@@ -94,14 +123,6 @@ input:-webkit-autofill:active {
       }
     });
   </script>
-
-  <style>
-    @keyframes pulse-slow {
-      0%,100%{opacity:0.85;}
-      50%{opacity:1;}
-    }
-    .animate-pulse-slow { animation: pulse-slow 5s infinite; }
-  </style>
 
 </body>
 </html>
