@@ -1,10 +1,14 @@
 import { protectPage, setupLogout } from './auth.js';
 
-// Protección y logout
+// ==========================
+// PROTECCIÓN
+// ==========================
 protectPage();
 setupLogout('logoutBtn');
 
-// Elementos
+// ==========================
+// ELEMENTOS
+// ==========================
 const fileInput = document.getElementById('fileInput');
 const dropArea = document.getElementById('dropArea');
 const selectBtn = document.getElementById('selectFileBtn');
@@ -14,55 +18,47 @@ const memoryState = document.getElementById('memoryState');
 const rowCount = document.getElementById('rowCount');
 const spinner = document.getElementById('loadingSpinner');
 const clearBtn = document.getElementById('clearFileBtn');
+const downloadPdfBtn = document.getElementById('downloadPdfBtn');
 
-// Memoria global
-let excelWorkbook = null;
+// ==========================
+// MEMORIA
+// ==========================
 let excelData = null;
 
-// Click en botón elegir archivo
+// ==========================
+// BOTONES
+// ==========================
 selectBtn.onclick = () => fileInput.click();
-
-// Cambio de archivo
 fileInput.addEventListener('change', handleFile);
 
-// Drag & Drop refinado
-let dragCounter = 0;
-
-dropArea.addEventListener('dragenter', (e) => {
+// ==========================
+// DRAG & DROP
+// ==========================
+dropArea.addEventListener('dragover', (e) => {
   e.preventDefault();
-  dragCounter++;
   dropArea.classList.add('drag-active');
 });
 
-dropArea.addEventListener('dragover', (e) => {
-  e.preventDefault();
-});
-
-dropArea.addEventListener('dragleave', (e) => {
-  e.preventDefault();
-  dragCounter--;
-  if (dragCounter === 0) {
-    dropArea.classList.remove('drag-active');
-  }
+dropArea.addEventListener('dragleave', () => {
+  dropArea.classList.remove('drag-active');
 });
 
 dropArea.addEventListener('drop', (e) => {
   e.preventDefault();
-  dragCounter = 0;
   dropArea.classList.remove('drag-active');
-
-  const files = e.dataTransfer.files;
-  if (!files.length) return;
-
-  fileInput.files = files;
+  fileInput.files = e.dataTransfer.files;
   handleFile();
 });
 
-
-// Quitar archivo
-clearBtn.addEventListener('click', () => {
-  excelWorkbook = null;
+// ==========================
+// LIMPIAR
+// ==========================
+clearBtn.onclick = () => {
   excelData = null;
+  fileAttachmentReset();
+};
+
+function fileAttachmentReset() {
   fileInput.value = '';
   fileName.textContent = '';
   fileStatus.textContent = '';
@@ -70,39 +66,128 @@ clearBtn.addEventListener('click', () => {
   memoryState.className = 'text-red-400 font-semibold';
   rowCount.textContent = '0';
   clearBtn.classList.add('hidden');
-});
 
-// Función principal para leer archivo
+  downloadPdfBtn.disabled = true;
+  downloadPdfBtn.classList.add('opacity-40', 'cursor-not-allowed');
+}
+
+// ==========================
+// LEER EXCEL (FORMATO VERTICAL)
+// ==========================
 async function handleFile() {
   if (!fileInput.files.length) return;
+
   const file = fileInput.files[0];
   fileName.textContent = `📄 ${file.name}`;
-  fileStatus.textContent = '';
   spinner.classList.remove('hidden');
-  memoryState.textContent = 'NO';
-  memoryState.className = 'text-red-400 font-semibold';
-  rowCount.textContent = '0';
-  clearBtn.classList.remove('hidden');
 
   try {
     const buffer = await file.arrayBuffer();
-    excelWorkbook = XLSX.read(buffer, { type: 'array' });
-    const sheetName = excelWorkbook.SheetNames[0];
-    excelData = XLSX.utils.sheet_to_json(excelWorkbook.Sheets[sheetName], { defval: '' });
+    const workbook = XLSX.read(buffer, { type: 'array' });
+    const sheet = workbook.Sheets[workbook.SheetNames[0]];
 
-    fileStatus.innerHTML = `✅ Archivo cargado correctamente<br>📄 Hoja: <span class="text-cyber">${sheetName}</span>`;
+    // 🔑 MATRIZ
+    const rows = XLSX.utils.sheet_to_json(sheet, {
+      header: 1,
+      defval: ''
+    });
+
+    excelData = {};
+
+rows.forEach(row => {
+  if (!row[0]) return; // sin etiqueta
+
+  // Buscar el primer valor NO vacío a la derecha
+  let value = '';
+  for (let i = 1; i < row.length; i++) {
+    if (row[i] !== '' && row[i] !== null && row[i] !== undefined) {
+      value = row[i];
+      break;
+    }
+  }
+
+  excelData[row[0].toString().trim()] = value;
+});
+
+
+    if (!Object.keys(excelData).length) {
+      throw new Error('Excel vacío');
+    }
+
+    fileStatus.textContent = '✅ Archivo cargado correctamente';
     memoryState.textContent = 'SÍ';
     memoryState.className = 'text-green-400 font-semibold';
-    rowCount.textContent = excelData.length;
+    rowCount.textContent = Object.keys(excelData).length;
+    clearBtn.classList.remove('hidden');
 
-    console.log('Excel en memoria:', excelData);
+    downloadPdfBtn.disabled = false;
+    downloadPdfBtn.classList.remove('opacity-40', 'cursor-not-allowed');
+
+    // DEBUG
+    console.log('Datos Excel:', excelData);
+
   } catch (err) {
     console.error(err);
-    fileStatus.textContent = '❌ Error al cargar el archivo';
+    fileStatus.textContent = '❌ Error al cargar el Excel';
+    fileAttachmentReset();
   } finally {
     spinner.classList.add('hidden');
   }
 }
 
-// Exponer datos globalmente
-window.getExcelData = () => excelData;
+// ==========================
+// GENERAR PDF (DATOS REALES)
+// ==========================
+downloadPdfBtn.onclick = () => {
+  if (!excelData) return;
+
+  const { jsPDF } = window.jspdf;
+
+  // 🔑 Helper seguro
+  const get = (label) => excelData[label] || '';
+
+  const TIPO_HOMO = get('1. TIPO DE HOMOLOGACIÓN');
+  const CLASE_VEH = get('2. CLASE DE VEHÍCULO');
+  const TIPO_CAR  = get('3. TIPO DE CARROCERÍA');
+  const MARCA     = get('MARCA');
+  const REFERENCIA= get('REFERENCIA');
+  const MODELO    = get('MODELO');
+  const SERVICIO  = get('SERVICIO');
+  const OPERACION = get('OPERACIÓN');
+
+  const doc = new jsPDF({
+    orientation: 'portrait',
+    unit: 'mm',
+    format: 'a4'
+  });
+
+  let y = 20;
+
+  // TITULO
+  doc.setFont('Helvetica', 'bold');
+  doc.setFontSize(14);
+  doc.text('CERTIFICACIÓN DE CARROCERÍA', 20, y);
+  y += 12;
+
+  doc.setFontSize(10);
+  doc.setFont('Helvetica', 'normal');
+
+  doc.text(`Tipo de homologación: ${TIPO_HOMO}`, 20, y); y += 6;
+  doc.text(`Clase de vehículo: ${CLASE_VEH}`, 20, y); y += 6;
+  doc.text(`Tipo de carrocería: ${TIPO_CAR}`, 20, y); y += 6;
+
+  y += 4;
+  doc.text(`Marca: ${MARCA}`, 20, y); y += 6;
+  doc.text(`Referencia: ${REFERENCIA}`, 20, y); y += 6;
+  doc.text(`Modelo: ${MODELO}`, 20, y); y += 6;
+  doc.text(`Servicio: ${SERVICIO}`, 20, y); y += 6;
+  doc.text(`Operación: ${OPERACION}`, 20, y); y += 10;
+
+  doc.text(
+    'Este documento se genera automáticamente a partir del archivo Excel cargado.',
+    20,
+    y
+  );
+
+  doc.save(`Certificacion_${REFERENCIA || 'vehiculo'}.pdf`);
+};
