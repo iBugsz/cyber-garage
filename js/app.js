@@ -89,26 +89,25 @@ async function handleFile() {
     // 🔑 MATRIZ
     const rows = XLSX.utils.sheet_to_json(sheet, {
       header: 1,
-      defval: ''
+      defval: '',
     });
 
     excelData = {};
 
-rows.forEach(row => {
-  if (!row[0]) return; // sin etiqueta
+    rows.forEach((row) => {
+      if (!row[0]) return; // sin etiqueta
 
-  // Buscar el primer valor NO vacío a la derecha
-  let value = '';
-  for (let i = 1; i < row.length; i++) {
-    if (row[i] !== '' && row[i] !== null && row[i] !== undefined) {
-      value = row[i];
-      break;
-    }
-  }
+      // Buscar el primer valor NO vacío a la derecha
+      let value = '';
+      for (let i = 1; i < row.length; i++) {
+        if (row[i] !== '' && row[i] !== null && row[i] !== undefined) {
+          value = row[i];
+          break;
+        }
+      }
 
-  excelData[row[0].toString().trim()] = value;
-});
-
+      excelData[row[0].toString().trim()] = value;
+    });
 
     if (!Object.keys(excelData).length) {
       throw new Error('Excel vacío');
@@ -125,7 +124,6 @@ rows.forEach(row => {
 
     // DEBUG
     console.log('Datos Excel:', excelData);
-
   } catch (err) {
     console.error(err);
     fileStatus.textContent = '❌ Error al cargar el Excel';
@@ -136,58 +134,50 @@ rows.forEach(row => {
 }
 
 // ==========================
-// GENERAR PDF (DATOS REALES)
+// GENERAR PDF CON html2pdf.js
 // ==========================
-downloadPdfBtn.onclick = () => {
+downloadPdfBtn.onclick = async () => {
   if (!excelData) return;
 
-  const { jsPDF } = window.jspdf;
-
-  // 🔑 Helper seguro
+  // Helper seguro
   const get = (label) => excelData[label] || '';
 
   const TIPO_HOMO = get('1. TIPO DE HOMOLOGACIÓN');
   const CLASE_VEH = get('2. CLASE DE VEHÍCULO');
-  const TIPO_CAR  = get('3. TIPO DE CARROCERÍA');
-  const MARCA     = get('MARCA');
-  const REFERENCIA= get('REFERENCIA');
-  const MODELO    = get('MODELO');
-  const SERVICIO  = get('SERVICIO');
+  const TIPO_CAR = get('3. TIPO DE CARROCERÍA');
+  const MARCA = get('MARCA');
+  const REFERENCIA = get('REFERENCIA');
+  const MODELO = get('MODELO');
+  const SERVICIO = get('SERVICIO');
   const OPERACION = get('OPERACIÓN');
 
-  const doc = new jsPDF({
-    orientation: 'portrait',
-    unit: 'mm',
-    format: 'a4'
-  });
+  // 1. Cargar la plantilla desde /templates/certificado.html
+  const response = await fetch('./templates/plantilla1.html');
+  const htmlText = await response.text();
 
-  let y = 20;
+  // 2. Crear un contenedor temporal y meter la plantilla
+  const container = document.createElement('div');
+  container.innerHTML = htmlText;
 
-  // TITULO
-  doc.setFont('Helvetica', 'bold');
-  doc.setFontSize(14);
-  doc.text('CERTIFICACIÓN DE CARROCERÍA', 20, y);
-  y += 12;
+  // 3. Rellenar los placeholders
+  container.querySelector('#TIPO_HOMO').textContent = TIPO_HOMO;
+  container.querySelector('#CLASE_VEH').textContent = CLASE_VEH;
+  container.querySelector('#TIPO_CAR').textContent = TIPO_CAR;
+  container.querySelector('#MARCA').textContent = MARCA;
+  container.querySelector('#REFERENCIA').textContent = REFERENCIA;
+  container.querySelector('#MODELO').textContent = MODELO;
+  container.querySelector('#SERVICIO').textContent = SERVICIO;
+  container.querySelector('#OPERACION').textContent = OPERACION;
 
-  doc.setFontSize(10);
-  doc.setFont('Helvetica', 'normal');
+  // 4. Configuración de html2pdf
+  const opt = {
+    margin: 0,
+    filename: `Certificacion_${REFERENCIA || 'vehiculo'}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2 },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+  };
 
-  doc.text(`Tipo de homologación: ${TIPO_HOMO}`, 20, y); y += 6;
-  doc.text(`Clase de vehículo: ${CLASE_VEH}`, 20, y); y += 6;
-  doc.text(`Tipo de carrocería: ${TIPO_CAR}`, 20, y); y += 6;
-
-  y += 4;
-  doc.text(`Marca: ${MARCA}`, 20, y); y += 6;
-  doc.text(`Referencia: ${REFERENCIA}`, 20, y); y += 6;
-  doc.text(`Modelo: ${MODELO}`, 20, y); y += 6;
-  doc.text(`Servicio: ${SERVICIO}`, 20, y); y += 6;
-  doc.text(`Operación: ${OPERACION}`, 20, y); y += 10;
-
-  doc.text(
-    'Este documento se genera automáticamente a partir del archivo Excel cargado.',
-    20,
-    y
-  );
-
-  doc.save(`Certificacion_${REFERENCIA || 'vehiculo'}.pdf`);
+  // 5. Generar PDF desde la plantilla ya rellenada
+  html2pdf().set(opt).from(container).outputPdf('dataurlnewwindow');
 };

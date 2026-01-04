@@ -1,0 +1,100 @@
+<div id="pdf-template" style="
+  font-family: 'Times New Roman', Georgia, 'Garamond', serif;
+  color: #000;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+">
+
+  <!-- Encabezado con logo a la izquierda y texto a la derecha -->
+  <div style="
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 30px 60px 10px 60px;
+  ">
+    <!-- Logo: reemplaza src con tu archivo -->
+    <img src="./assets/logo-fanalca.png" alt="Fanalca" style="height: 70px; width: auto; object-fit: contain;">
+
+    <div style="text-align: right;">
+      <p style="font-size: 16px; font-weight: bold; margin: 0;">Fanalca</p>
+      <p style="font-size: 14px; margin: 2px 0 0 0;">NIT 890.301.886-1</p>
+    </div>
+  </div>
+
+  <!-- Título -->
+  <h1 style="
+    text-align: center;
+    font-size: 22px;
+    font-weight: bold;
+    font-style: italic;
+    margin-top: 20px;
+  ">
+    CERTIFICACIÓN
+  </h1>
+
+  <!-- Texto principal -->
+  <p style="
+    font-size: 16px;
+    font-style: italic;
+    margin: 30px 60px 15px 60px;
+    line-height: 1.6;
+  ">
+    Certificamos que el centro de la carga es el que se describe en la figura para nuestro producto Recolector-Compactador F25E.
+  </p>
+
+  <!-- Datos técnicos -->
+  <div style="
+    margin: 10px auto 0 auto;
+    width: 80%;
+    font-size: 16px;
+    line-height: 1.6;
+    font-style: italic
+  ">
+    <p style="margin: 4px 0;">Peso de la carga: 13.416 kg</p>
+  </div>
+
+  <!-- Recuadro para imagen técnica -->
+  <div style="
+    margin: 30px auto;
+    width: 80%;
+    height: 260px;
+    border: 1px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  ">
+    <!-- Reemplaza este div por tu <img src="..."> cuando tengas la figura -->
+    <span style="font-size: 14px; color: #666;">[Figura técnica aquí]</span>
+  </div>
+
+  <!-- Firma -->
+  <div style="margin: 20px 60px; font-size: 16px; line-height: 1.6;">
+    <p style="margin: 4px 0;">Atentamente,</p>
+    <p style="margin: 4px 0;"><strong>FANALCA S.A.</strong></p>
+    <p style="margin: 4px 0;">NIT. 890.301.886-1</p>
+    <p style="margin: 12px 0 4px 0;">ALVARO ALFONSO RUIZ VILLAFANE</p>
+    <p style="margin: 4px 0;">Gerente de Ventas Unidad de Negocio Ambiental</p>
+    <p style="margin: 4px 0;">Fanalca S.A.</p>
+  </div>
+
+  <!-- Pie de página -->
+  <div style="margin: 20px 60px 40px 60px; font-size: 14px; line-height: 1.6;">
+    <p style="margin: 4px 0;">FABRICA NACIONAL DE AUTOPARTES S.A. FANALCA S.A.</p>
+    <p style="margin: 4px 0;">Planta y Oficinas: Calle 13 No. 31 A 80 URB IND. ACOPI - Yumbo-Colombia</p>
+    <p style="margin: 4px 0;">T. (572) 6515300 FAX: (572) 651 03 02</p>
+  </div>
+
+  <!-- IDs requeridos por tu script (ocultos) -->
+  <div style="display: none;">
+    <span id="TIPO_HOMO"></span>
+    <span id="CLASE_VEH"></span>
+    <span id="TIPO_CAR"></span>
+    <span id="MARCA"></span>
+    <span id="REFERENCIA"></span>
+    <span id="MODELO"></span>
+    <span id="SERVICIO"></span>
+    <span id="OPERACION"></span>
+  </div>
+</div>
