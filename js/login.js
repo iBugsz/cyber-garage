@@ -19,7 +19,7 @@ loginBtn.addEventListener('click', () => {
 
   signInWithEmailAndPassword(auth, email, password)
     .then(() => {
-      window.location.href = 'app.html';
+      window.location.href = 'home.html';
     })
     .catch((error) => {
       let message = 'Error al iniciar sesión';

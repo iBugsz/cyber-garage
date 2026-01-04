@@ -67,8 +67,13 @@ function fileAttachmentReset() {
   rowCount.textContent = '0';
   clearBtn.classList.add('hidden');
 
+  // Mostrar de nuevo texto y botón seleccionar
+  selectBtn.classList.remove('hidden');
+  dropArea.querySelector('p').classList.remove('hidden');
+
+  // Ocultar botón descargar
+  downloadPdfBtn.classList.add('hidden');
   downloadPdfBtn.disabled = true;
-  downloadPdfBtn.classList.add('opacity-40', 'cursor-not-allowed');
 }
 
 // ==========================
@@ -119,8 +124,13 @@ async function handleFile() {
     rowCount.textContent = Object.keys(excelData).length;
     clearBtn.classList.remove('hidden');
 
+    // Ocultar texto y botón seleccionar
+    selectBtn.classList.add('hidden');
+    dropArea.querySelector('p').classList.add('hidden');
+
+    // Mostrar botón descargar
+    downloadPdfBtn.classList.remove('hidden');
     downloadPdfBtn.disabled = false;
-    downloadPdfBtn.classList.remove('opacity-40', 'cursor-not-allowed');
 
     // DEBUG
     console.log('Datos Excel:', excelData);

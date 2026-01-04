@@ -7,98 +7,133 @@
 
   <link rel="icon" type="image/png" href="./favicon/favicon.png" />
 
-  <style>
-    .drag-active {
-      border-color: #00ffcc !important;
-      box-shadow: 0 0 25px rgba(0, 255, 204, 0.4);
-      transform: scale(1.03);
-      background: rgba(0, 255, 204, 0.05);
-    }
-  </style>
-
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
-          colors: { cyber: "#00ffcc" }
-        }
-      }
-    }
+          colors: {
+            cyberBlue: '#00ffff',
+            cyberPink: '#ff00ff',
+            darkCard: '#0a0a0a',
+          },
+          fontFamily: {
+            techno: ['"Orbitron"', 'sans-serif'],
+          },
+          borderRadius: {
+            'xl-wave': '2.5rem 0.5rem 2.5rem 0.5rem',
+          },
+        },
+      },
+    };
   </script>
+
+  <!-- Fuente -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    .drag-active {
+      border-color: #00ffff !important;
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
+      transform: scale(1.03);
+      background: rgba(0, 255, 255, 0.05);
+    }
+  </style>
 
   <!-- SheetJS -->
   <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 </head>
 
-<body class="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 text-white">
+<body class="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white font-techno">
 
-<header class="w-full px-6 py-4 border-b border-gray-800 bg-black/40">
-  <h1 class="text-xl font-bold text-cyber">Cyber-Garage</h1>
-</header>
+  <!-- Header con menú -->
+  <header class="w-full flex justify-between items-center px-6 py-4 border-b border-gray-800 bg-black/40">
+    <h1 class="text-2xl font-bold text-cyberBlue">Cyber-Garage</h1>
 
-<main class="p-6 max-w-6xl mx-auto">
-
-<section class="mb-8">
-  <h2 class="text-3xl font-semibold">Panel de archivos 📂</h2>
-  <p class="text-gray-400">Sube un Excel y genera el PDF automáticamente</p>
-</section>
-
-<section class="bg-gray-900/80 border border-gray-800 rounded-2xl p-8 shadow-lg mb-8">
-  <div id="dropArea" class="border-2 border-dashed border-gray-700 rounded-xl p-8 text-center cursor-pointer transition">
-
-    <input type="file" id="fileInput" accept=".xls,.xlsx" class="hidden"/>
-
-    <p class="text-gray-400 mb-4">
-      Selecciona un archivo <span class="text-cyber">.xls</span> o <span class="text-cyber">.xlsx</span>
-    </p>
-
-    <button id="selectFileBtn"
-      class="px-6 py-3 rounded-lg bg-cyber text-black font-semibold hover:bg-teal-300 transition">
-      Elegir archivo
-    </button>
-
-    <p id="fileName" class="mt-4 text-sm"></p>
-    <p id="fileStatus" class="text-sm text-gray-400"></p>
-
-    <div id="loadingSpinner" class="hidden mt-3">
-      <span class="animate-spin inline-block w-5 h-5 border-2 border-cyber border-t-transparent rounded-full"></span>
-      <span class="ml-2 text-gray-400">Cargando...</span>
+    <div class="relative">
+      <button id="menuBtn" class="px-4 py-2 rounded-lg bg-cyberPink text-black font-semibold hover:scale-105 transition">
+        ⚙️ Opciones
+      </button>
+      <div id="menuDropdown" class="hidden absolute right-0 mt-2 w-40 bg-darkCard border border-gray-700 rounded-lg shadow-lg">
+        <a href="home.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-800">🏠 Home</a>
+        <a href="#" class="block px-4 py-2 text-gray-300 hover:bg-gray-800">Ajustes</a>
+        <a href="login.html" class="block px-4 py-2 text-red-400 hover:bg-gray-800">Cerrar sesión</a>
+      </div>
     </div>
+  </header>
 
-    <button id="clearFileBtn"
-      class="hidden mt-4 px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition">
-      ❌ Quitar archivo
-    </button>
-  </div>
-</section>
+  <!-- Contenido principal -->
+  <main class="p-8 max-w-6xl mx-auto">
+    <section class="mb-8">
+      <h2 class="text-3xl font-bold text-cyberBlue">Panel de archivos 📂</h2>
+      <p class="text-gray-400 italic">Sube un Excel y genera el PDF automáticamente</p>
+    </section>
 
-<section class="bg-gray-900/80 border border-gray-800 rounded-2xl p-6 shadow-lg mb-8">
-  <p class="text-gray-400">
-    Excel en memoria:
-    <span id="memoryState" class="text-red-400 font-semibold">NO</span>
-  </p>
-  <p class="text-gray-400 mt-2">
-    Filas detectadas:
-    <span id="rowCount" class="text-cyber font-semibold">0</span>
-  </p>
-</section>
+    <!-- Drop Area -->
+    <section class="bg-darkCard/90 border border-gray-700 rounded-xl-wave p-8 shadow-2xl mb-8 backdrop-blur-sm hover:scale-[1.02] transition">
+      <div id="dropArea" class="border-2 border-dashed border-gray-700 rounded-xl p-8 text-center cursor-pointer transition">
+        <input type="file" id="fileInput" accept=".xls,.xlsx" class="hidden"/>
 
-<section class="text-center">
-  <button id="downloadPdfBtn" disabled
-    class="px-8 py-3 rounded-lg bg-cyber text-black font-semibold opacity-40 cursor-not-allowed transition">
-    📄 Descargar PDF
-  </button>
-</section>
+        <p class="text-gray-400 mb-4">
+          Selecciona un archivo <span class="text-cyberBlue">.xls</span> o <span class="text-cyberPink">.xlsx</span>
+        </p>
 
-</main>
+        <button id="selectFileBtn"
+          class="px-6 py-3 rounded-3xl bg-gradient-to-r from-cyberBlue to-cyberPink text-black font-bold hover:scale-105 hover:shadow-lg transition">
+          Elegir archivo
+        </button>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script type="module" src="./js/app.js"></script>
+        <p id="fileName" class="mt-4 text-sm"></p>
+        <p id="fileStatus" class="text-sm text-gray-400"></p>
 
-<!-- PDF -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<script type="module" src="./js/app.js"></script>
+        <div id="loadingSpinner" class="hidden mt-3">
+          <span class="animate-spin inline-block w-5 h-5 border-2 border-cyberBlue border-t-transparent rounded-full"></span>
+          <span class="ml-2 text-gray-400">Cargando...</span>
+        </div>
+
+        <button id="clearFileBtn"
+          class="hidden mt-4 px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition">
+          ❌ Quitar archivo
+        </button>
+      </div>
+    </section>
+
+    <!-- Estado -->
+    <section class="bg-darkCard/90 border border-gray-700 rounded-xl-wave p-6 shadow-2xl mb-8 backdrop-blur-sm">
+      <p class="text-gray-400">
+        Excel en memoria:
+        <span id="memoryState" class="text-red-400 font-semibold">NO</span>
+      </p>
+      <p class="text-gray-400 mt-2">
+        Filas detectadas:
+        <span id="rowCount" class="text-cyberBlue font-semibold">0</span>
+      </p>
+    </section>
+
+    <!-- Botón PDF -->
+    <section class="text-center">
+      <button id="downloadPdfBtn"
+  class="hidden px-8 py-3 rounded-3xl bg-gradient-to-r from-cyberBlue to-cyberPink text-black font-bold transition">
+  📄 Descargar PDF
+</button>
+
+    </section>
+  </main>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script type="module" src="./js/app.js"></script>
+
+  <!-- JS menú -->
+  <script>
+    const menuBtn = document.getElementById('menuBtn');
+    const menuDropdown = document.getElementById('menuDropdown');
+
+    menuBtn.addEventListener('click', () => {
+      menuDropdown.classList.toggle('hidden');
+    });
+  </script>
 </body>
 </html>
