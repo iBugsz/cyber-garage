@@ -49,6 +49,7 @@ downloadWordBtn.onclick = () => {
   generateWord(excelData);
 };
 
+
 // ==========================
 // DRAG & DROP
 // ==========================
