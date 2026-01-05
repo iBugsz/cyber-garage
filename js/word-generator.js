@@ -2,13 +2,7 @@ export async function generateWord(excelData) {
   const get = (label) => excelData[label] || '';
 
   // 1) Cargar plantilla Word
-  // Detectar si estás en GitHub Pages y extraer el nombre del repo
-const pathParts = window.location.pathname.split('/');
-const repoName = pathParts[1] || ''; // en GitHub Pages será "mi-proyecto", en local será vacío
-
-const baseUrl = window.location.origin + (repoName ? '/' + repoName : '');
-const resp = await fetch(`${baseUrl}/templates/word/carroceria/carga/fanalca.docx`);
-
+  const resp = await fetch('/templates/word/carroceria/carga/fanalca.docx');
   const arrayBuffer = await resp.arrayBuffer();
 
   // 2) Preparar zip y docxtemplater
