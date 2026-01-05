@@ -20,7 +20,7 @@ function login() {
 
   signInWithEmailAndPassword(auth, email, password)
     .then(() => {
-      window.location.href = 'home.html';
+      window.location.href = './views/home/';
     })
     .catch((error) => {
       let message = 'Error al iniciar sesión';

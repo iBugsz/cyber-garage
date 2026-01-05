@@ -2,7 +2,7 @@ export async function generateWord(excelData) {
   const get = (label) => excelData[label] || '';
 
   // 1) Cargar plantilla Word
-  const resp = await fetch('./templates/word/carroceria/carga/fanalca.docx');
+  const resp = await fetch('/templates/word/carroceria/carga/fanalca.docx');
   const arrayBuffer = await resp.arrayBuffer();
 
   // 2) Preparar zip y docxtemplater
