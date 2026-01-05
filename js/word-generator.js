@@ -5,8 +5,8 @@ export async function generateWord(excelData) {
   const repo = window.location.pathname.split('/')[1] || '';
   const baseUrl = window.location.origin + (repo ? '/' + repo : '');
 
-  // 1) Cargar plantilla Word
-  const resp = await fetch(`${baseUrl}../../templates/word/carroceria/carga/fanalca.docx`);
+  // 1) Cargar plantilla Word (sin ../../)
+  const resp = await fetch(`${baseUrl}/templates/word/carroceria/carga/fanalca.docx`);
   const arrayBuffer = await resp.arrayBuffer();
 
   // 2) Preparar zip y docxtemplater
@@ -26,7 +26,6 @@ export async function generateWord(excelData) {
     OPERACION: get('OPERACIÓN'),
   });
 
-  // 4) Renderizar
   try {
     doc.render();
   } catch (e) {
@@ -34,7 +33,6 @@ export async function generateWord(excelData) {
     return;
   }
 
-  // 5) Generar blob y descargar
   const out = doc.getZip().generate({
     type: 'blob',
     mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
