@@ -1,4 +1,6 @@
 import { protectPage, setupLogout } from './auth.js';
+import { generatePdf } from './pdf-generator.js';
+import { generateWord } from './word-generator.js';
 
 // ==========================
 // PROTECCIÓN
@@ -19,6 +21,7 @@ const rowCount = document.getElementById('rowCount');
 const spinner = document.getElementById('loadingSpinner');
 const clearBtn = document.getElementById('clearFileBtn');
 const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+const downloadWordBtn = document.getElementById('downloadWordBtn'); // 👈 nuevo botón
 
 // ==========================
 // MEMORIA
@@ -30,6 +33,21 @@ let excelData = null;
 // ==========================
 selectBtn.onclick = () => fileInput.click();
 fileInput.addEventListener('change', handleFile);
+
+clearBtn.onclick = () => {
+  excelData = null;
+  fileAttachmentReset();
+};
+
+downloadPdfBtn.onclick = () => {
+  if (!excelData) return;
+  generatePdf(excelData);
+};
+
+downloadWordBtn.onclick = () => {
+  if (!excelData) return;
+  generateWord(excelData);
+};
 
 // ==========================
 // DRAG & DROP
@@ -53,11 +71,6 @@ dropArea.addEventListener('drop', (e) => {
 // ==========================
 // LIMPIAR
 // ==========================
-clearBtn.onclick = () => {
-  excelData = null;
-  fileAttachmentReset();
-};
-
 function fileAttachmentReset() {
   fileInput.value = '';
   fileName.textContent = '';
@@ -67,13 +80,13 @@ function fileAttachmentReset() {
   rowCount.textContent = '0';
   clearBtn.classList.add('hidden');
 
-  // Mostrar de nuevo texto y botón seleccionar
   selectBtn.classList.remove('hidden');
   dropArea.querySelector('p').classList.remove('hidden');
 
-  // Ocultar botón descargar
   downloadPdfBtn.classList.add('hidden');
   downloadPdfBtn.disabled = true;
+  downloadWordBtn.classList.add('hidden'); // 👈 ocultar Word también
+  downloadWordBtn.disabled = true;
 }
 
 // ==========================
@@ -91,7 +104,6 @@ async function handleFile() {
     const workbook = XLSX.read(buffer, { type: 'array' });
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
 
-    // 🔑 MATRIZ
     const rows = XLSX.utils.sheet_to_json(sheet, {
       header: 1,
       defval: '',
@@ -100,9 +112,7 @@ async function handleFile() {
     excelData = {};
 
     rows.forEach((row) => {
-      if (!row[0]) return; // sin etiqueta
-
-      // Buscar el primer valor NO vacío a la derecha
+      if (!row[0]) return;
       let value = '';
       for (let i = 1; i < row.length; i++) {
         if (row[i] !== '' && row[i] !== null && row[i] !== undefined) {
@@ -110,7 +120,6 @@ async function handleFile() {
           break;
         }
       }
-
       excelData[row[0].toString().trim()] = value;
     });
 
@@ -124,15 +133,14 @@ async function handleFile() {
     rowCount.textContent = Object.keys(excelData).length;
     clearBtn.classList.remove('hidden');
 
-    // Ocultar texto y botón seleccionar
     selectBtn.classList.add('hidden');
     dropArea.querySelector('p').classList.add('hidden');
 
-    // Mostrar botón descargar
     downloadPdfBtn.classList.remove('hidden');
     downloadPdfBtn.disabled = false;
+    downloadWordBtn.classList.remove('hidden'); // 👈 mostrar Word también
+    downloadWordBtn.disabled = false;
 
-    // DEBUG
     console.log('Datos Excel:', excelData);
   } catch (err) {
     console.error(err);
@@ -142,52 +150,3 @@ async function handleFile() {
     spinner.classList.add('hidden');
   }
 }
-
-// ==========================
-// GENERAR PDF CON html2pdf.js
-// ==========================
-downloadPdfBtn.onclick = async () => {
-  if (!excelData) return;
-
-  // Helper seguro
-  const get = (label) => excelData[label] || '';
-
-  const TIPO_HOMO = get('1. TIPO DE HOMOLOGACIÓN');
-  const CLASE_VEH = get('2. CLASE DE VEHÍCULO');
-  const TIPO_CAR = get('3. TIPO DE CARROCERÍA');
-  const MARCA = get('MARCA');
-  const REFERENCIA = get('REFERENCIA');
-  const MODELO = get('MODELO');
-  const SERVICIO = get('SERVICIO');
-  const OPERACION = get('OPERACIÓN');
-
-  // 1. Cargar la plantilla desde /templates/certificado.html
-  const response = await fetch('./templates/plantilla1.html');
-  const htmlText = await response.text();
-
-  // 2. Crear un contenedor temporal y meter la plantilla
-  const container = document.createElement('div');
-  container.innerHTML = htmlText;
-
-  // 3. Rellenar los placeholders
-  container.querySelector('#TIPO_HOMO').textContent = TIPO_HOMO;
-  container.querySelector('#CLASE_VEH').textContent = CLASE_VEH;
-  container.querySelector('#TIPO_CAR').textContent = TIPO_CAR;
-  container.querySelector('#MARCA').textContent = MARCA;
-  container.querySelector('#REFERENCIA').textContent = REFERENCIA;
-  container.querySelector('#MODELO').textContent = MODELO;
-  container.querySelector('#SERVICIO').textContent = SERVICIO;
-  container.querySelector('#OPERACION').textContent = OPERACION;
-
-  // 4. Configuración de html2pdf
-  const opt = {
-    margin: 0,
-    filename: `Certificacion_${REFERENCIA || 'vehiculo'}.pdf`,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2 },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-  };
-
-  // 5. Generar PDF desde la plantilla ya rellenada
-  html2pdf().set(opt).from(container).outputPdf('dataurlnewwindow');
-};

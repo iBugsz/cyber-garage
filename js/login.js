@@ -3,18 +3,19 @@ import { auth } from './firebase.js';
 
 const loginBtn = document.getElementById('loginBtn');
 const errorMsg = document.getElementById('errorMsg');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
 
-loginBtn.addEventListener('click', () => {
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value.trim();
+// 🔑 Función de login (la misma para botón y Enter)
+function login() {
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
 
-  // Validación rápida (antes de Firebase)
   if (!email || !password) {
     showError('Completa todos los campos');
     return;
   }
 
-  // Limpia error previo
   hideError();
 
   signInWithEmailAndPassword(auth, email, password)
@@ -45,6 +46,16 @@ loginBtn.addEventListener('click', () => {
       showError(message);
       console.error(error);
     });
+}
+
+// 👉 Click en botón
+loginBtn.addEventListener('click', login);
+
+// 👉 Enter en cualquier input del formulario
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    loginBtn.click(); // simula el click en el botón
+  }
 });
 
 // Helpers UI
@@ -58,5 +69,5 @@ function hideError() {
 }
 
 // Ocultar error al escribir
-document.getElementById('email').addEventListener('input', hideError);
-document.getElementById('password').addEventListener('input', hideError);
+emailInput.addEventListener('input', hideError);
+passwordInput.addEventListener('input', hideError);
