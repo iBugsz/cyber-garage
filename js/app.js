@@ -1,6 +1,6 @@
 import { protectPage, setupLogout } from './auth.js';
 import { generatePdf } from './pdf-generator.js';
-import { generateWord } from './word-generator.js';
+import { generateFanalcaWord } from './mappers/carga.js'; // 👈 usar mapper específico
 
 // ==========================
 // PROTECCIÓN
@@ -21,7 +21,7 @@ const rowCount = document.getElementById('rowCount');
 const spinner = document.getElementById('loadingSpinner');
 const clearBtn = document.getElementById('clearFileBtn');
 const downloadPdfBtn = document.getElementById('downloadPdfBtn');
-const downloadWordBtn = document.getElementById('downloadWordBtn'); // 👈 nuevo botón
+const downloadWordBtn = document.getElementById('downloadWordBtn'); // 👈 botón Word
 
 // ==========================
 // MEMORIA
@@ -46,9 +46,8 @@ downloadPdfBtn.onclick = () => {
 
 downloadWordBtn.onclick = () => {
   if (!excelData) return;
-  generateWord(excelData);
+  generateFanalcaWord(excelData); // 👈 llamar mapper, no generador genérico
 };
-
 
 // ==========================
 // DRAG & DROP
