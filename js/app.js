@@ -24,7 +24,7 @@ const downloadWordBtn = document.getElementById('downloadWordBtn'); // 👈 bot�
 // ==========================
 // MEMORIA
 // ==========================
-let excelData = null;
+let workbook = null; // 👈 guardamos el workbook entero
 
 // ==========================
 // EMPRESA (desde URL)
@@ -40,14 +40,14 @@ selectBtn.onclick = () => fileInput.click();
 fileInput.addEventListener('change', handleFile);
 
 clearBtn.onclick = () => {
-  excelData = null;
+  workbook = null;
   fileAttachmentReset();
 };
 
 downloadWordBtn.onclick = () => {
-  if (!excelData) return;
+  if (!workbook) return;
   console.log('Generando Word con empresa:', empresa);
-  generateWordByEmpresa(excelData, empresa); // 👈 ahora dinámico
+  generateWordByEmpresa(workbook, empresa); // 👈 pasamos workbook al mapper
 };
 
 // ==========================
@@ -84,12 +84,12 @@ function fileAttachmentReset() {
   selectBtn.classList.remove('hidden');
   dropArea.querySelector('p').classList.remove('hidden');
 
-  downloadWordBtn.classList.add('hidden'); // 👈 ocultar Word también
+  downloadWordBtn.classList.add('hidden');
   downloadWordBtn.disabled = true;
 }
 
 // ==========================
-// LEER EXCEL (FORMATO VERTICAL)
+// LEER EXCEL (por workbook)
 // ==========================
 async function handleFile() {
   if (!fileInput.files.length) return;
@@ -100,45 +100,28 @@ async function handleFile() {
 
   try {
     const buffer = await file.arrayBuffer();
-    const workbook = XLSX.read(buffer, { type: 'array' });
+    workbook = XLSX.read(buffer, { type: 'array' }); // 👈 guardamos workbook entero
+
+    // contar filas de la primera hoja solo como referencia
     const sheet = workbook.Sheets[workbook.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' });
 
-    const rows = XLSX.utils.sheet_to_json(sheet, {
-      header: 1,
-      defval: '',
-    });
-
-    excelData = {};
-
-    rows.forEach((row) => {
-      if (!row[0]) return;
-      let value = '';
-      for (let i = 1; i < row.length; i++) {
-        if (row[i] !== '' && row[i] !== null && row[i] !== undefined) {
-          value = row[i];
-          break;
-        }
-      }
-      excelData[row[0].toString().trim()] = value;
-    });
-
-    if (!Object.keys(excelData).length) {
-      throw new Error('Excel vacío');
-    }
+    if (!rows.length) throw new Error('Excel vacío');
 
     fileStatus.textContent = '✅ Archivo cargado correctamente';
     memoryState.textContent = 'SÍ';
     memoryState.className = 'text-green-400 font-semibold';
-    rowCount.textContent = Object.keys(excelData).length;
+    rowCount.textContent = rows.length; // 👈 solo referencia
     clearBtn.classList.remove('hidden');
 
     selectBtn.classList.add('hidden');
     dropArea.querySelector('p').classList.add('hidden');
 
-    downloadWordBtn.classList.remove('hidden'); // 👈 mostrar Word
+    downloadWordBtn.classList.remove('hidden');
     downloadWordBtn.disabled = false;
 
-    console.log('Datos Excel:', excelData);
+    console.log('Workbook cargado:', workbook);
+    console.log('Hojas disponibles:', workbook.SheetNames);
   } catch (err) {
     console.error(err);
     fileStatus.textContent = '❌ Error al cargar el Excel';
