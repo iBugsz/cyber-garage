@@ -22,7 +22,7 @@ export function mapExcelData(workbook, empresa) {
 
   const data = {
     FECHA: new Date().toLocaleDateString(),
-    TIPO_CARROCERIA:   getCell('FTH ', 'C6', 'TIPO_CARROCERIA'),
+    T_C:   getCell('FTH ', 'C6', 'T_C'),
     MARCA:             getCell('FTH ', 'C9', 'MARCA'),
     REF_CARROCERIA:    getCell('FTH ', 'C91', 'REF_CARROCERIA'),
     REF_CHASIS:        getCell('FTH ', 'C10', 'REF_CHASIS'),
@@ -44,6 +44,11 @@ export function mapExcelData(workbook, empresa) {
     CM_DEL:        getCell('MEDIDAS Y PESOS', 'M4', 'CM_DEL'),
     CM_TRA:        getCell('MEDIDAS Y PESOS', 'M5', 'CM_TRA'),
     CM_TOT:        getCell('MEDIDAS Y PESOS', 'M6', 'CM_TOT'),
+    E:        getCell('MEDIDAS Y PESOS', 'L11', 'E'),
+    
+    DCC:        getCell('CALCULOS CENTROS DE GRAVEDAD', 'E14', 'DCC'), //carga
+
+    DCG:        getCell('ESTUDIO DE PESOS', 'F27', 'DCG'),
   };
 
   console.log('✅ Datos mapeados para Word:', data);
