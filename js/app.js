@@ -1,6 +1,5 @@
 import { protectPage, setupLogout } from './auth.js';
-import { generatePdf } from './pdf-generator.js';
-import { generateFanalcaWord } from './mappers/carga.js'; // 👈 usar mapper específico
+import { generateWordByEmpresa } from './services/word-service.js'; // 👈 servicio dinámico
 
 // ==========================
 // PROTECCIÓN
@@ -20,13 +19,19 @@ const memoryState = document.getElementById('memoryState');
 const rowCount = document.getElementById('rowCount');
 const spinner = document.getElementById('loadingSpinner');
 const clearBtn = document.getElementById('clearFileBtn');
-const downloadPdfBtn = document.getElementById('downloadPdfBtn');
 const downloadWordBtn = document.getElementById('downloadWordBtn'); // 👈 botón Word
 
 // ==========================
 // MEMORIA
 // ==========================
 let excelData = null;
+
+// ==========================
+// EMPRESA (desde URL)
+// ==========================
+const params = new URLSearchParams(window.location.search);
+const empresa = params.get('empresa'); // fanalca o ferrari_crane
+console.log('Empresa seleccionada desde URL:', empresa);
 
 // ==========================
 // BOTONES
@@ -39,14 +44,10 @@ clearBtn.onclick = () => {
   fileAttachmentReset();
 };
 
-downloadPdfBtn.onclick = () => {
-  if (!excelData) return;
-  generatePdf(excelData);
-};
-
 downloadWordBtn.onclick = () => {
   if (!excelData) return;
-  generateFanalcaWord(excelData); // 👈 llamar mapper, no generador genérico
+  console.log('Generando Word con empresa:', empresa);
+  generateWordByEmpresa(excelData, empresa); // 👈 ahora dinámico
 };
 
 // ==========================
@@ -83,8 +84,6 @@ function fileAttachmentReset() {
   selectBtn.classList.remove('hidden');
   dropArea.querySelector('p').classList.remove('hidden');
 
-  downloadPdfBtn.classList.add('hidden');
-  downloadPdfBtn.disabled = true;
   downloadWordBtn.classList.add('hidden'); // 👈 ocultar Word también
   downloadWordBtn.disabled = true;
 }
@@ -136,9 +135,7 @@ async function handleFile() {
     selectBtn.classList.add('hidden');
     dropArea.querySelector('p').classList.add('hidden');
 
-    downloadPdfBtn.classList.remove('hidden');
-    downloadPdfBtn.disabled = false;
-    downloadWordBtn.classList.remove('hidden'); // 👈 mostrar Word también
+    downloadWordBtn.classList.remove('hidden'); // 👈 mostrar Word
     downloadWordBtn.disabled = false;
 
     console.log('Datos Excel:', excelData);

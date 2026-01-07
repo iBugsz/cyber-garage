@@ -26,7 +26,7 @@ export async function generateWord(templateRelativePath, data) {
 
   const a = document.createElement('a');
   a.href = URL.createObjectURL(out);
-  a.download = `Certificacion_${data.REFERENCIA || 'vehiculo'}.docx`;
+  a.download = `Explicacion_carga.docx`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

@@ -1,10 +1,8 @@
-import { generateWord } from '../generators/word-generator.js';
-
-export function generateFanalcaWord(excelData) {
+// Mapper: convierte excelData en objeto data
+export function mapExcelData(excelData) {
   const get = (label) => excelData[label] || '';
 
-  // Mapeo de campos específicos para la plantilla fanalca.docx
-  const data = {
+  return {
     FECHA: new Date().toLocaleDateString(),
     TIPO_HOMOLOGACION: get('1. TIPO DE HOMOLOGACIÓN'),
     CLASE_VEHICULO: get('2. CLASE DE VEHÍCULO'),
@@ -16,7 +14,4 @@ export function generateFanalcaWord(excelData) {
     OPERACION: get('OPERACIÓN'),
     CARGA_UTIL: get('CARGA UTIL CALCULADA'),
   };
-
-  // Llamada al generador genérico con la ruta de la plantilla
-  generateWord('templates/word/carroceria/carga/fanalca.docx', data);
 }
