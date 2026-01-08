@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cyber-Garage | Catálogos</title>
+
+  <link rel="icon" type="image/png" href="../favicon/favicon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cyberBlue: '#3b82f6',
+            cyberPink: '#d946ef',
+            darkCard: '#0a0a0a',
+          },
+          fontFamily: {
+            techno: ['"Orbitron"', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Fuente -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white font-techno">
+
+  <!-- Header -->
+  <header class="w-full flex justify-between items-center px-6 py-4 border-b border-gray-800 bg-black/40">
+    <h1 class="text-2xl font-bold text-green-400 flex items-center">
+      <i class="fa-solid fa-folder-open mr-2"></i> Catálogos
+    </h1>
+    <a href="../home/index.html" class="text-gray-400 hover:text-cyberBlue transition">
+      <i class="fa-solid fa-house mr-2"></i> Volver al panel
+    </a>
+  </header>
+
+  <!-- Contenido principal -->
+  <main class="p-8 max-w-4xl mx-auto">
+    <!-- Subir archivo -->
+    <div class="bg-darkCard/90 border border-gray-700 rounded-xl p-6 shadow-lg mb-8">
+      <h2 class="text-xl font-semibold text-cyberBlue mb-4 flex items-center">
+        <i class="fa-solid fa-upload mr-2"></i> Subir nuevo catálogo
+      </h2>
+      <div class="flex items-center gap-4">
+        <input type="file" id="fileInput" class="flex-1 text-gray-300 bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-cyberBlue" />
+        <button id="uploadBtn" class="px-4 py-2 bg-gradient-to-r from-cyberBlue to-cyberPink text-black font-bold rounded-lg hover:scale-105 transition">
+          <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Subir
+        </button>
+      </div>
+    </div>
+
+    <!-- Lista de archivos -->
+    <div class="bg-darkCard/90 border border-gray-700 rounded-xl p-6 shadow-lg">
+      <h2 class="text-xl font-semibold text-green-400 mb-4 flex items-center">
+        <i class="fa-solid fa-list mr-2"></i> Catálogos disponibles
+      </h2>
+      <div id="fileList" class="space-y-3">
+        <!-- Aquí se renderizan los archivos -->
+      </div>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+  <!-- JS -->
+  <script type="module">
+    import { subirArchivo, listarArchivos } from '../../js/storage.js';
+
+    const fileInput = document.getElementById('fileInput');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const fileList = document.getElementById('fileList');
+
+    uploadBtn.addEventListener('click', async () => {
+      if (!fileInput.files.length) return;
+      const file = fileInput.files[0];
+      const url = await subirArchivo(file);
+      alert('Archivo subido: ' + url);
+      mostrarArchivos();
+    });
+
+    async function mostrarArchivos() {
+  const files = await listarArchivos();
+  fileList.innerHTML = files.map(f => `
+    <div class="flex items-center justify-between bg-gray-800 px-4 py-2 rounded-lg hover:bg-gray-700 transition">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-file text-cyberBlue"></i>
+        <span>${f.name}</span>
+      </div>
+      <a href="${f.url}" target="_blank" class="text-green-400 hover:text-green-300">
+        <i class="fa-solid fa-download"></i>
+      </a>
+    </div>
+  `).join('');
+}
+
+    mostrarArchivos();
+  </script>
+</body>
+</html>

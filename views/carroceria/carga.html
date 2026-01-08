@@ -6,6 +6,7 @@
   <title>Cyber-Garage | Carrocería - Carga</title>
 
   <link rel="icon" type="image/png" href="./favicon/favicon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 
   <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -32,21 +33,31 @@
 
 <body class="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white font-techno">
 
-  <!-- Header -->
-  <header class="w-full flex justify-between items-center px-6 py-4 border-b border-gray-800 bg-black/40">
-    <h1 class="text-2xl font-bold text-cyberBlue">Cyber-Garage</h1>
+<header class="w-full flex justify-between items-center px-6 py-4 border-b border-gray-800 bg-black/40">
+  <h1 class="text-2xl font-bold text-cyberBlue flex items-center">
+    <i class="fa-solid fa-car mr-2"></i> Cyber-Garage
+  </h1>
 
-    <!-- Menú -->
-    <div class="relative">
-      <button id="menuBtn" class="px-4 py-2 rounded-lg bg-cyberPink text-black font-semibold hover:scale-105 transition">
-        ⚙️ Opciones
-      </button>
-      <div id="menuDropdown" class="hidden absolute right-0 mt-2 w-40 bg-darkCard border border-gray-700 rounded-lg shadow-lg">
-        <a href="#" class="block px-4 py-2 text-gray-300 hover:bg-gray-800">Ajustes</a>
-        <a href="index.html" class="block px-4 py-2 text-red-400 hover:bg-gray-800">Cerrar sesión</a>
-      </div>
+  <div class="relative">
+    <!-- Botón con ícono fa-bars -->
+    <button id="menuBtn" class="p-2 rounded-lg text-gray-300 hover:bg-gray-800 transition">
+      <i class="fa-solid fa-bars"></i>
+    </button>
+
+    <!-- Menú desplegable fusionado con más ancho -->
+    <div id="menuDropdown" class="hidden absolute right-0 mt-2 w-52 bg-black border border-gray-700 rounded-lg shadow-lg">
+      <a href="../home/index.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-800 whitespace-nowrap">
+        <i class="fa-solid fa-house mr-2"></i> Home
+      </a>
+      <a href="#" class="block px-4 py-2 text-gray-300 hover:bg-gray-800 whitespace-nowrap">
+        <i class="fa-solid fa-gear mr-2"></i> Ajustes
+      </a>
+      <a href="index.html" class="block px-4 py-2 text-red-400 hover:bg-gray-800 whitespace-nowrap">
+        <i class="fa-solid fa-right-from-bracket mr-2"></i> Cerrar sesión
+      </a>
     </div>
-  </header>
+  </div>
+</header>
 
   <!-- Contenido -->
   <main class="p-8 max-w-6xl mx-auto">

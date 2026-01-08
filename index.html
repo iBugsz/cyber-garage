@@ -6,6 +6,7 @@
   <title>Cyber-Garage | Login</title>
 
   <link rel="icon" type="image/png" href="./favicon/favicon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="css/style.css">
 
   <!-- Tailwind -->
@@ -15,8 +16,8 @@
       theme: {
         extend: {
           colors: {
-            cyberBlue: '#00ffff',
-            cyberPink: '#ff00ff',
+            cyberBlue: '#3b82f6',   // Azul elegante
+            cyberPink: '#d946ef',   // Fucsia sobrio
             darkCard: '#0a0a0a',
           },
           fontFamily: {
@@ -37,28 +38,28 @@
 <body class="min-h-screen bg-black flex items-center justify-center font-techno relative overflow-hidden">
 
   <!-- 🎥 Canvas de fondo -->
-  <canvas
-    id="bgCanvas"
-    class="fixed inset-0 w-full h-full -z-10"
-  ></canvas>
+  <canvas id="bgCanvas" class="fixed inset-0 w-full h-full -z-10"></canvas>
 
-  <!-- Overlay oscuro sutil -->
+  <!-- Overlay oscuro -->
   <div class="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black opacity-70 pointer-events-none"></div>
 
   <!-- Card -->
   <div class="relative z-10 w-full max-w-sm bg-darkCard/95 rounded-xl-wave shadow-2xl border border-gray-800 p-10 flex flex-col items-center backdrop-blur-sm hover:scale-[1.02] transition-transform duration-300">
     
     <h1 class="text-3xl font-bold mb-4 text-cyberBlue drop-shadow-lg text-center">
-      Automatizacion Excel
+      Automatización Excel
     </h1>
 
     <!-- Email -->
-    <input
-      type="email"
-      id="email"
-      placeholder="Correo electrónico"
-      class="w-full mb-4 px-5 py-3 rounded-3xl bg-gray-800 border border-gray-700 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-cyberBlue transition-all"
-    />
+    <div class="w-full mb-4 relative">
+      <input
+        type="email"
+        id="email"
+        placeholder="Correo electrónico"
+        class="w-full px-5 py-3 rounded-3xl bg-gray-800 border border-gray-700 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-cyberBlue transition-all pl-10"
+      />
+      <i class="fa-solid fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+    </div>
 
     <!-- Password -->
     <div class="w-full relative mb-6">
@@ -66,53 +67,56 @@
         type="password"
         id="password"
         placeholder="Contraseña"
-        class="w-full px-5 py-3 rounded-3xl bg-gray-800 border border-gray-700 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-cyberPink pr-12 transition-all"
+        class="w-full px-5 py-3 rounded-3xl bg-gray-800 border border-gray-700 placeholder-gray-400 text-white focus:outline-none focus:ring-2 focus:ring-cyberPink pr-12 pl-10 transition-all"
       />
+      <i class="fa-solid fa-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
       <button
         type="button"
         id="togglePass"
         class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-cyberPink"
       >
-        👁️
+        <i class="fa-solid fa-eye"></i>
       </button>
     </div>
 
     <!-- Button -->
     <button
       id="loginBtn"
-      class="w-full py-3 mb-4 rounded-3xl bg-gradient-to-r from-cyberBlue to-cyberPink text-black font-bold hover:scale-105 hover:shadow-lg transition-all duration-200 active:scale-95"
+      class="w-full py-3 mb-4 rounded-3xl bg-gradient-to-r from-cyberBlue to-cyberPink text-black font-bold hover:scale-105 hover:shadow-lg transition-all duration-200 active:scale-95 flex items-center justify-center gap-2"
     >
-      Entrar 🚀
+      <i class="fa-solid fa-right-to-bracket"></i> Entrar
     </button>
 
+    <!-- Error -->
     <p
       id="errorMsg"
       class="hidden text-sm text-red-400 bg-red-500/10 border border-red-500/30 rounded-lg px-4 py-2 w-full text-center"
     ></p>
 
     <p class="text-xs text-gray-500 mt-6">
-      © 2026 Automatizacion-Excel
+      © 2026 Automatización-Excel
     </p>
   </div>
 
   <!-- JS Login -->
   <script type="module" src="js/login.js"></script>
-
-  <!-- JS Fondo animado -->
   <script src="js/bg-animation.js"></script>
 
   <!-- Toggle password -->
   <script>
     const toggleBtn = document.getElementById('togglePass');
     const passwordInput = document.getElementById('password');
+    const eyeIcon = toggleBtn.querySelector('i');
 
     toggleBtn.addEventListener('click', () => {
       if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
-        toggleBtn.textContent = '🙈';
+        eyeIcon.classList.remove('fa-eye');
+        eyeIcon.classList.add('fa-eye-slash');
       } else {
         passwordInput.type = 'password';
-        toggleBtn.textContent = '👁️';
+        eyeIcon.classList.remove('fa-eye-slash');
+        eyeIcon.classList.add('fa-eye');
       }
     });
   </script>
