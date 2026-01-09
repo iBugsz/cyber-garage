@@ -61,24 +61,45 @@
     <!-- Lista de archivos -->
     <div class="bg-darkCard/90 border border-gray-700 rounded-xl p-6 shadow-lg">
       <h2 class="text-xl font-semibold text-green-400 mb-4 flex items-center">
-        <i class="fa-solid fa-list mr-2"></i> Catálogos disponibles del nemenichino
+        <i class="fa-solid fa-list mr-2"></i> Catálogos disponibles
       </h2>
+      <!-- Espacio ocupado -->
+      <p id="bucketUsage" class="text-sm text-gray-400 mb-4"></p>
       <div id="fileList" class="space-y-3">
         <!-- Aquí se renderizan los archivos -->
       </div>
     </div>
   </main>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Modal de previsualización -->
+  <div id="previewModal" class="hidden fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+    <div class="bg-gray-900 rounded-lg shadow-lg w-3/4 h-3/4 relative">
+      <button id="closePreview" class="absolute top-2 right-2 text-red-400 hover:text-red-300">
+        <i class="fa-solid fa-xmark text-2xl"></i>
+      </button>
+      <iframe id="previewFrame" class="w-full h-full rounded-lg" frameborder="0"></iframe>
+    </div>
+  </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <!-- JS -->
   <script type="module">
-    import { subirArchivo, listarArchivos } from '../../js/storage.js';
+    import {
+  subirArchivo,
+  listarArchivos,
+  eliminarArchivo,
+  descargarArchivo
+} from '../../js/storage.js';
+
 
     const fileInput = document.getElementById('fileInput');
     const uploadBtn = document.getElementById('uploadBtn');
     const fileList = document.getElementById('fileList');
+    const previewModal = document.getElementById('previewModal');
+    const previewFrame = document.getElementById('previewFrame');
+    const closePreview = document.getElementById('closePreview');
+    const bucketUsage = document.getElementById('bucketUsage');
 
     uploadBtn.addEventListener('click', async () => {
       if (!fileInput.files.length) return;
@@ -89,19 +110,61 @@
     });
 
     async function mostrarArchivos() {
-  const files = await listarArchivos();
-  fileList.innerHTML = files.map(f => `
-    <div class="flex items-center justify-between bg-gray-800 px-4 py-2 rounded-lg hover:bg-gray-700 transition">
-      <div class="flex items-center gap-2">
-        <i class="fa-solid fa-file text-cyberBlue"></i>
-        <span>${f.name}</span>
-      </div>
-      <a href="${f.url}" target="_blank" class="text-green-400 hover:text-green-300">
-        <i class="fa-solid fa-download"></i>
-      </a>
-    </div>
-  `).join('');
-}
+      const files = await listarArchivos();
+
+      // Calcular espacio ocupado
+      const totalBytes = files.reduce((sum, f) => sum + (f.size || 0), 0);
+      bucketUsage.textContent = `Espacio ocupado: ${(totalBytes / (1024*1024)).toFixed(2)} MB`;
+
+      fileList.innerHTML = files.map(f => `
+        <div class="flex items-center justify-between bg-gray-800 px-4 py-2 rounded-lg hover:bg-gray-700 transition">
+          <div class="flex items-center gap-2">
+            <i class="fa-solid fa-file text-cyberBlue"></i>
+            <span>${f.name}</span>
+          </div>
+          <div class="flex gap-3">
+            <button class="text-cyberPink hover:text-pink-400" onclick="previewFile('${f.url}')">
+              <i class="fa-solid fa-eye"></i>
+            </button>
+            <button class="text-green-400 hover:text-green-300"
+                    onclick="downloadFile('${f.path}', '${f.name}')">
+              <i class="fa-solid fa-download"></i>
+            </button>
+            <button class="text-red-400 hover:text-red-300" onclick="deleteFile('${f.path}')">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 👉 Previsualizar archivo
+    window.previewFile = (url) => {
+      previewFrame.src = url;
+      previewModal.classList.remove('hidden');
+    };
+
+    closePreview.addEventListener('click', () => {
+      previewModal.classList.add('hidden');
+      previewFrame.src = '';
+    });
+
+    // 👉 Eliminar archivo
+    window.deleteFile = async (path) => {
+      if (confirm('¿Seguro que quieres eliminar este archivo?')) {
+        const ok = await eliminarArchivo(path);
+        if (ok) {
+          alert('Archivo eliminado');
+          mostrarArchivos();
+        }
+      }
+    };
+
+    // 👉 Descargar archivo
+window.downloadFile = async (path, name) => {
+  await descargarArchivo(path, name);
+};
+
 
     mostrarArchivos();
   </script>

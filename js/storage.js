@@ -1,63 +1,108 @@
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+import { supabase } from './supabase.js';
 
-const supabaseUrl = 'https://icnbvztrrkhmjugwavfn.supabase.co';
-const supabaseKey =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImljbmJ2enRycmtobWp1Z3dhdmZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njc4ODU1MDksImV4cCI6MjA4MzQ2MTUwOX0.d4207UJRb3gyGQ4mLKrAYVZ0Aa0G2xThOZJ2-qFbfTs';
-
-export const supabase = createClient(supabaseUrl, supabaseKey);
-
-// 🔹 Cambia este nombre por el nuevo bucket que vas a crear
 const bucketName = 'catalogos';
-// 🔹 Carpeta interna dentro del bucket
 const folderName = 'archivos';
 
-// 📂 Subir archivo dentro de la carpeta "archivos"
+/* =========================
+   📂 SUBIR ARCHIVO
+========================= */
 export async function subirArchivo(file) {
-  const filePath = `${folderName}/${Date.now()}-${file.name}`;
-  const { data, error } = await supabase.storage
-    .from(bucketName)
-    .upload(filePath, file, { upsert: true });
+  try {
+    const safeName = file.name.replace(/\s+/g, '_');
+    const filePath = `${folderName}/${Date.now()}-${safeName}`;
 
-  if (error) {
-    console.error('❌ Error al subir:', error);
-    return null;
-  }
-
-  const { data: publicUrl } = supabase.storage
-    .from(bucketName)
-    .getPublicUrl(filePath);
-
-  console.log('✅ Archivo subido:', filePath, '→ URL:', publicUrl.publicUrl);
-  return publicUrl.publicUrl;
-}
-
-// 📄 Listar archivos dentro de "archivos"
-export async function listarArchivos() {
-  const { data, error } = await supabase.storage
-    .from(bucketName)
-    .list(folderName, { limit: 100 });
-
-  if (error) {
-    console.error('❌ Error al listar:', error);
-    return [];
-  }
-
-  if (!data || data.length === 0) {
-    console.warn('⚠️ No se encontraron archivos en la carpeta:', folderName);
-    return [];
-  }
-
-  console.log('📁 Archivos encontrados en', folderName, ':', data);
-
-  return data.map((file) => {
-    const filePath = `${folderName}/${file.name}`;
-    const { data: publicUrl } = supabase.storage
+    const { error } = await supabase.storage
       .from(bucketName)
-      .getPublicUrl(filePath);
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false,
+      });
+
+    if (error) throw error;
+
+    const { data } = supabase.storage.from(bucketName).getPublicUrl(filePath);
 
     return {
-      name: file.name,
-      url: publicUrl.publicUrl,
+      name: safeName,
+      path: filePath,
+      url: data.publicUrl,
     };
-  });
+  } catch (err) {
+    console.error('❌ Error al subir archivo:', err.message);
+    return null;
+  }
+}
+
+/* =========================
+   📄 LISTAR ARCHIVOS
+========================= */
+export async function listarArchivos() {
+  try {
+    const { data, error } = await supabase.storage
+      .from(bucketName)
+      .list(folderName, {
+        limit: 100,
+        sortBy: { column: 'created_at', order: 'desc' },
+      });
+
+    if (error) throw error;
+
+    return data
+      .filter((file) => file.name) // evita carpetas fantasma
+      .map((file) => {
+        const path = `${folderName}/${file.name}`;
+        const { data: urlData } = supabase.storage
+          .from(bucketName)
+          .getPublicUrl(path);
+
+        return {
+          name: file.name,
+          path,
+          url: urlData.publicUrl,
+          createdAt: file.created_at,
+        };
+      });
+  } catch (err) {
+    console.error('❌ Error al listar archivos:', err.message);
+    return [];
+  }
+}
+
+/* =========================
+   🗑️ ELIMINAR ARCHIVO
+========================= */
+export async function eliminarArchivo(path) {
+  try {
+    const { error } = await supabase.storage.from(bucketName).remove([path]);
+
+    if (error) throw error;
+
+    return true;
+  } catch (err) {
+    console.error('❌ Error al eliminar archivo:', err.message);
+    return false;
+  }
+}
+
+export async function descargarArchivo(path, nombre) {
+  try {
+    const { data, error } = await supabase.storage
+      .from(bucketName)
+      .download(path);
+
+    if (error) throw error;
+
+    const url = URL.createObjectURL(data);
+    const a = document.createElement('a');
+
+    a.href = url;
+    a.download = nombre;
+    document.body.appendChild(a);
+    a.click();
+
+    a.remove();
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    console.error('❌ Error al descargar archivo:', err.message);
+  }
 }

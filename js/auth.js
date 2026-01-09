@@ -1,17 +1,13 @@
-import {
-  onAuthStateChanged,
-  signOut,
-} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-
-import { auth } from './firebase.js';
+import { supabase } from './supabase.js';
 
 // 🔒 Proteger página
-export function protectPage(redirect = 'index.html') {
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      window.location.href = redirect;
-    }
-  });
+export async function protectPage(redirect = 'index.html') {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+  if (!session) {
+    window.location.href = redirect;
+  }
 }
 
 // 🚪 Logout
@@ -19,9 +15,8 @@ export function setupLogout(buttonId) {
   const btn = document.getElementById(buttonId);
   if (!btn) return;
 
-  btn.addEventListener('click', () => {
-    signOut(auth).then(() => {
-      window.location.href = 'index.html';
-    });
+  btn.addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    window.location.href = 'index.html';
   });
 }

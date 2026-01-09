@@ -1,13 +1,12 @@
-import { signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
-import { auth } from './firebase.js';
+import { supabase } from './supabase.js';
 
 const loginBtn = document.getElementById('loginBtn');
 const errorMsg = document.getElementById('errorMsg');
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
 
-// 🔑 Función de login (la misma para botón y Enter)
-function login() {
+// 🔑 Función de login
+async function login() {
   const email = emailInput.value.trim();
   const password = passwordInput.value.trim();
 
@@ -18,34 +17,33 @@ function login() {
 
   hideError();
 
-  signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      window.location.href = './views/home/';
-    })
-    .catch((error) => {
-      let message = 'Error al iniciar sesión';
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
 
-      switch (error.code) {
-        case 'auth/missing-password':
-          message = 'Escribe tu contraseña';
-          break;
-        case 'auth/invalid-email':
-          message = 'Correo inválido';
-          break;
-        case 'auth/user-not-found':
-          message = 'Usuario no existe';
-          break;
-        case 'auth/wrong-password':
-          message = 'Contraseña incorrecta';
-          break;
-        case 'auth/invalid-credential':
-          message = 'Correo o contraseña incorrectos';
-          break;
-      }
+  if (error) {
+    let message = 'Error al iniciar sesión';
 
-      showError(message);
-      console.error(error);
-    });
+    switch (error.message) {
+      case 'Invalid login credentials':
+        message = 'Correo o contraseña incorrectos';
+        break;
+      case 'Email not found':
+        message = 'Usuario no existe';
+        break;
+      case 'Password is required':
+        message = 'Escribe tu contraseña';
+        break;
+    }
+
+    showError(message);
+    console.error(error);
+    return;
+  }
+
+  // ✅ Login exitoso
+  window.location.href = './views/home/';
 }
 
 // 👉 Click en botón
@@ -54,7 +52,7 @@ loginBtn.addEventListener('click', login);
 // 👉 Enter en cualquier input del formulario
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') {
-    loginBtn.click(); // simula el click en el botón
+    loginBtn.click();
   }
 });
 
