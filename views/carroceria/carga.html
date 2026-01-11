@@ -1,115 +1,177 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cyber-Garage | Carrocería - Carga</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cyber-Garage | Carrocería - Carga</title>
 
-  <link rel="icon" type="image/png" href="./favicon/favicon.png" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="icon" type="image/png" href="./favicon/favicon.png" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
 
-  <!-- Tailwind -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            cyberBlue: '#00ffff',
-            cyberPink: '#ff00ff',
-            darkCard: '#0a0a0a',
-          },
-          fontFamily: {
-            techno: ['"Orbitron"', 'sans-serif'],
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              cyberBlue: '#00ffff',
+              cyberPink: '#ff00ff',
+              darkCard: '#0a0a0a',
+            },
+            fontFamily: {
+              techno: ['"Orbitron"', 'sans-serif'],
+            },
           },
         },
-      },
-    };
-  </script>
+      };
+    </script>
 
-  <!-- Fuente -->
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-</head>
+    <!-- Fuente -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
 
-<body class="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white font-techno">
-
-<header class="w-full flex justify-between items-center px-6 py-4 border-b border-gray-800 bg-black/40">
-  <h1 class="text-2xl font-bold text-cyberBlue flex items-center">
-    <i class="fa-solid fa-car mr-2"></i> Cyber-Garage
-  </h1>
-
-  <div class="relative">
-    <!-- Botón con ícono fa-bars -->
-    <button id="menuBtn" class="p-2 rounded-lg text-gray-300 hover:bg-gray-800 transition">
-      <i class="fa-solid fa-bars"></i>
-    </button>
-
-    <!-- Menú desplegable fusionado con más ancho -->
-    <div id="menuDropdown" class="hidden absolute right-0 mt-2 w-52 bg-black border border-gray-700 rounded-lg shadow-lg">
-      <a href="../home/index.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-800 whitespace-nowrap">
-        <i class="fa-solid fa-house mr-2"></i> Home
-      </a>
-      <a href="#" class="block px-4 py-2 text-gray-300 hover:bg-gray-800 whitespace-nowrap">
-        <i class="fa-solid fa-gear mr-2"></i> Ajustes
-      </a>
-      <a href="index.html" class="block px-4 py-2 text-red-400 hover:bg-gray-800 whitespace-nowrap">
-        <i class="fa-solid fa-right-from-bracket mr-2"></i> Cerrar sesión
-      </a>
+  <body
+    class="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white font-techno"
+  >
+    <div id="loader" class="flex items-center justify-center min-h-screen">
+      <i class="fa-solid fa-spinner fa-spin text-cyberBlue text-5xl"></i>
+      <p class="text-gray-400 mt-4">Verificando sesión...</p>
     </div>
-  </div>
-</header>
+    <!-- Contenido protegido -->
+    <div id="app" style="display: none">
+      <header
+        class="w-full flex justify-between items-center px-6 py-4 border-b border-gray-800 bg-black/40"
+      >
+        <h1 class="text-2xl font-bold text-cyberBlue flex items-center">
+          <i class="fa-solid fa-car mr-2"></i> Cyber-Garage
+        </h1>
 
-  <!-- Contenido -->
-  <main class="p-8 max-w-6xl mx-auto">
-    <div class="flex items-center justify-between mb-6">
-      <h2 class="text-3xl font-bold text-cyberBlue">Carrocería → Carga</h2>
-      <a href="./index.html" class="text-sm text-gray-300 hover:text-cyberBlue transition underline">← Volver a Carrocería</a>
-    </div>
+        <div class="relative">
+          <!-- Botón con ícono fa-bars -->
+          <button
+            id="menuBtn"
+            class="p-2 rounded-lg text-gray-300 hover:bg-gray-800 transition"
+          >
+            <i class="fa-solid fa-bars"></i>
+          </button>
 
-    <p class="text-gray-400 mb-6">Selecciona la empresa para usar su plantilla de certificación.</p>
+          <!-- Menú desplegable fusionado con más ancho -->
+          <div
+            id="menuDropdown"
+            class="hidden absolute right-0 mt-2 w-52 bg-black border border-gray-700 rounded-lg shadow-lg"
+          >
+            <a
+              href="../home/index.html"
+              class="block px-4 py-2 text-gray-300 hover:bg-gray-800 whitespace-nowrap"
+            >
+              <i class="fa-solid fa-house mr-2"></i> Home
+            </a>
+            <a
+              href="#"
+              class="block px-4 py-2 text-gray-300 hover:bg-gray-800 whitespace-nowrap"
+            >
+              <i class="fa-solid fa-gear mr-2"></i> Ajustes
+            </a>
+           <a
+              href="#"
+              id="logoutBtn"
+              class="block px-4 py-2 text-red-400 hover:bg-gray-800 whitespace-nowrap"
+            >
+              <i class="fa-solid fa-right-from-bracket mr-2"></i> Cerrar sesión
+            </a>
+          </div>
+        </div>
+      </header>
 
-    <!-- Cajoncitos -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-    
-      <div onclick="location.href='../../views/app/index.html?categoria=carroceria&subcontenido=carga&empresa=fanalca'"
-        class="cursor-pointer bg-darkCard/90 border border-gray-700 rounded-xl p-6 text-center hover:scale-105 hover:border-cyberPink transition">
-
-        <!-- Contenedor del logo con fondo distinto -->
-        <div class="mx-auto mb-4 h-20 w-20 flex items-center justify-center rounded-full bg-white">
-          <img src="../../assets/images/fanalca.png" alt="Logo Fanalca" class="h-12 object-contain" />
+      <!-- Contenido -->
+      <main class="p-8 max-w-6xl mx-auto">
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-3xl font-bold text-cyberBlue">Carrocería → Carga</h2>
+          <a
+            href="./index.html"
+            class="text-sm text-gray-300 hover:text-cyberBlue transition underline"
+            >← Volver a Carrocería</a
+          >
         </div>
 
-        <h3 class="text-xl font-semibold text-cyberPink mb-2">Fanalca</h3>
-        <p class="text-gray-400">Plantilla de certificación</p>
-      </div>
-    <!-- Ferrari Crane -->
-<div onclick="location.href='../../views/app/index.html?categoria=carroceria&subcontenido=carga&empresa=ferrari_crane'"
-  class="cursor-pointer bg-darkCard/90 border border-gray-700 rounded-xl p-6 text-center hover:scale-105 hover:border-cyberPink transition">
+        <p class="text-gray-400 mb-6">
+          Selecciona la empresa para usar su plantilla de certificación.
+        </p>
 
-  <!-- Contenedor del logo con fondo distinto -->
-  <div class="mx-auto mb-4 h-20 w-20 flex items-center justify-center rounded-full bg-white">
-    <img src="../../assets/images/ferrari_crane2.png" alt="Logo Ferrari Crane" class="h-12 object-contain" />
-  </div>
+        <!-- Cajoncitos -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div
+            onclick="location.href='../../views/app/index.html?categoria=carroceria&subcontenido=carga&empresa=fanalca'"
+            class="cursor-pointer bg-darkCard/90 border border-gray-700 rounded-xl p-6 text-center hover:scale-105 hover:border-cyberPink transition"
+          >
+            <!-- Contenedor del logo con fondo distinto -->
+            <div
+              class="mx-auto mb-4 h-20 w-20 flex items-center justify-center rounded-full bg-white"
+            >
+              <img
+                src="../../assets/images/fanalca.png"
+                alt="Logo Fanalca"
+                class="h-12 object-contain"
+              />
+            </div>
 
-  <h3 class="text-xl font-semibold text-cyberPink mb-2">Ferrari Crane</h3>
-  <p class="text-gray-400">Plantilla de certificación</p>
-</div>
+            <h3 class="text-xl font-semibold text-cyberPink mb-2">Fanalca</h3>
+            <p class="text-gray-400">Plantilla de certificación</p>
+          </div>
+          <!-- Ferrari Crane -->
+          <div
+            onclick="location.href='../../views/app/index.html?categoria=carroceria&subcontenido=carga&empresa=ferrari_crane'"
+            class="cursor-pointer bg-darkCard/90 border border-gray-700 rounded-xl p-6 text-center hover:scale-105 hover:border-cyberPink transition"
+          >
+            <!-- Contenedor del logo con fondo distinto -->
+            <div
+              class="mx-auto mb-4 h-20 w-20 flex items-center justify-center rounded-full bg-white"
+            >
+              <img
+                src="../../assets/images/ferrari_crane2.png"
+                alt="Logo Ferrari Crane"
+                class="h-12 object-contain"
+              />
+            </div>
 
+            <h3 class="text-xl font-semibold text-cyberPink mb-2">
+              Ferrari Crane
+            </h3>
+            <p class="text-gray-400">Plantilla de certificación</p>
+          </div>
 
-      <!-- Próximamente -->
-      <div class="cursor-default bg-darkCard/90 border border-gray-700 rounded-xl p-6 text-center opacity-70">
-        <h3 class="text-xl font-semibold text-gray-400 mb-2">Próximamente</h3>
-        <p class="text-gray-500">Más empresas</p>
-      </div>
+          <!-- Próximamente -->
+          <div
+            class="cursor-default bg-darkCard/90 border border-gray-700 rounded-xl p-6 text-center opacity-70"
+          >
+            <h3 class="text-xl font-semibold text-gray-400 mb-2">
+              Próximamente
+            </h3>
+            <p class="text-gray-500">Más empresas</p>
+          </div>
+        </div>
+      </main>
     </div>
-  </main>
 
-  <!-- JS menú -->
-  <script>
-    const menuBtn = document.getElementById('menuBtn');
-    const menuDropdown = document.getElementById('menuDropdown');
-    menuBtn.addEventListener('click', () => menuDropdown.classList.toggle('hidden'));
-  </script>
+    <!-- JS menú -->
+    <script>
+      const menuBtn = document.getElementById('menuBtn');
+      const menuDropdown = document.getElementById('menuDropdown');
+      menuBtn.addEventListener('click', () =>
+        menuDropdown.classList.toggle('hidden'),
+      );
+    </script>
 
-</body>
+    <script type="module">
+      import { guardPage } from '../../js/auth-guard.js';
+      guardPage('../../index.html'); // redirige al login si no hay sesión
+    </script>
+  </body>
 </html>

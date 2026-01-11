@@ -33,89 +33,97 @@
 
 <body class="min-h-screen bg-gradient-to-br from-black via-gray-900 to-black text-white font-techno">
 
-    <!-- Header con menú -->
-  <header class="w-full flex justify-between items-center px-6 py-4 border-b border-gray-800 bg-black/40">
-    <h1 class="text-2xl font-bold text-cyberBlue flex items-center">
-      <i class="fa-solid fa-car mr-2"></i> Cyber-Garage
-    </h1>
+  <!-- Loader -->
+  <div id="loader" class="flex items-center justify-center min-h-screen">
+    <div class="text-center">
+      <i class="fa-solid fa-spinner fa-spin text-cyberBlue text-5xl mb-4"></i>
+      <p class="text-gray-400">Verificando sesión...</p>
+    </div>
+  </div>
 
-    <div class="relative">
-      <!-- Botón con ícono fa-bars -->
-      <button id="menuBtn" class="p-2 rounded-lg text-gray-300 hover:bg-gray-800 transition">
-        <i class="fa-solid fa-bars"></i>
-      </button>
+  <!-- Contenido protegido -->
+  <div id="app" style="display:none;">
+    <header class="w-full flex justify-between items-center px-6 py-4 border-b border-gray-800 bg-black/40">
+      <h1 class="text-2xl font-bold text-cyberBlue flex items-center">
+        <i class="fa-solid fa-car mr-2"></i> Cyber-Garage
+      </h1>
 
-      <!-- Menú desplegable fusionado con más ancho -->
-      <div id="menuDropdown" class="hidden absolute right-0 mt-2 w-52 bg-black border border-gray-700 rounded-lg shadow-lg">
-        <a href="../home/index.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-800 whitespace-nowrap">
-          <i class="fa-solid fa-house mr-2"></i> Home
-        </a>
-        <a href="#" class="block px-4 py-2 text-gray-300 hover:bg-gray-800 whitespace-nowrap">
-          <i class="fa-solid fa-gear mr-2"></i> Ajustes
-        </a>
-        <a href="index.html" class="block px-4 py-2 text-red-400 hover:bg-gray-800 whitespace-nowrap">
-          <i class="fa-solid fa-right-from-bracket mr-2"></i> Cerrar sesión
+      <div class="relative">
+        <!-- Botón con ícono fa-bars -->
+        <button id="menuBtn" class="p-2 rounded-lg text-gray-300 hover:bg-gray-800 transition">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+
+        <!-- Menú desplegable -->
+        <div id="menuDropdown" class="hidden absolute right-0 mt-2 w-52 bg-black border border-gray-700 rounded-lg shadow-lg">
+          <a href="../home/index.html" class="block px-4 py-2 text-gray-300 hover:bg-gray-800 whitespace-nowrap">
+            <i class="fa-solid fa-house mr-2"></i> Home
+          </a>
+          <a href="#" class="block px-4 py-2 text-gray-300 hover:bg-gray-800 whitespace-nowrap">
+            <i class="fa-solid fa-gear mr-2"></i> Ajustes
+          </a>
+          <a href="#" id="logoutBtn" class="block px-4 py-2 text-red-400 hover:bg-gray-800 whitespace-nowrap">
+            <i class="fa-solid fa-right-from-bracket mr-2"></i> Cerrar sesión
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <main class="p-8 max-w-6xl mx-auto">
+      <h2 class="text-3xl font-bold mb-6 text-cyberBlue">Panel principal <i class="fas fa-car"></i></h2>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Carrocería -->
+        <div onclick="location.href='../carroceria/'"
+          class="cursor-pointer bg-darkCard/90 border border-gray-700 rounded-xl p-6 text-center hover:scale-105 hover:border-cyberBlue transition">
+          <i class="fas fa-car-side text-5xl text-cyberBlue mb-4"></i>
+          <h3 class="text-xl font-semibold text-cyberBlue mb-2">Carrocería</h3>
+          <p class="text-gray-400">Gestión de archivos relacionados con carrocería</p>
+        </div>
+
+        <!-- Motor -->
+        <div
+          class="cursor-pointer bg-darkCard/90 border border-gray-700 rounded-xl p-6 text-center hover:scale-105 hover:border-cyberPink transition">
+          <i class="fas fa-cogs text-5xl text-cyberPink mb-4"></i>
+          <h3 class="text-xl font-semibold text-cyberPink mb-2">Plataforma con equipo especial</h3>
+          <p class="text-gray-400">Próximamente...</p>
+        </div>
+
+        <!-- Eléctrico -->
+        <div
+          class="cursor-pointer bg-darkCard/90 border border-gray-700 rounded-xl p-6 text-center hover:scale-105 hover:border-cyberBlue transition">
+          <i class="fas fa-bolt text-5xl text-cyberBlue mb-4"></i>
+          <h3 class="text-xl font-semibold text-cyberBlue mb-2">Vehículo carrozado</h3>
+          <p class="text-gray-400">Próximamente...</p>
+        </div>
+      </div>
+
+      <!-- Catálogos -->
+      <div class="mt-6">
+        <a href="../catalogos/"
+          class="block cursor-pointer bg-darkCard/90 border border-gray-700 rounded-xl p-6 text-center hover:scale-105 hover:border-green-400 transition">
+          <i class="fas fa-folder-open text-5xl text-green-400 mb-4"></i>
+          <h3 class="text-xl font-semibold text-green-400 mb-2">Catálogos</h3>
+          <p class="text-gray-400">Sube y consulta catálogos disponibles</p>
         </a>
       </div>
-    </div>
-  </header>
-
-  <!-- Contenido principal -->
-  <main class="p-8 max-w-6xl mx-auto">
-    <h2 class="text-3xl font-bold mb-6 text-cyberBlue">Panel principal <i class="fas fa-car"></i></h2>
-
-    <!-- Cajoncitos -->
-   <!-- Cajoncitos -->
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-  
-  <!-- Carrocería -->
-  <div onclick="location.href='../carroceria/'"
-    class="cursor-pointer bg-darkCard/90 border border-gray-700 rounded-xl p-6 text-center hover:scale-105 hover:border-cyberBlue transition">
-    <i class="fas fa-car-side text-5xl text-cyberBlue mb-4"></i>
-    <h3 class="text-xl font-semibold text-cyberBlue mb-2">Carrocería</h3>
-    <p class="text-gray-400">Gestión de archivos relacionados con carrocería</p>
+    </main>
   </div>
-
-  <!-- Motor -->
-  <div
-    class="cursor-pointer bg-darkCard/90 border border-gray-700 rounded-xl p-6 text-center hover:scale-105 hover:border-cyberPink transition">
-    <i class="fas fa-cogs text-5xl text-cyberPink mb-4"></i>
-    <h3 class="text-xl font-semibold text-cyberPink mb-2">Plataforma con equipo especial</h3>
-    <p class="text-gray-400">Próximamente...</p>
-  </div>
-
-  <!-- Eléctrico -->
-  <div
-    class="cursor-pointer bg-darkCard/90 border border-gray-700 rounded-xl p-6 text-center hover:scale-105 hover:border-cyberBlue transition">
-    <i class="fas fa-bolt text-5xl text-cyberBlue mb-4"></i>
-    <h3 class="text-xl font-semibold text-cyberBlue mb-2">Vehículo carrozado</h3>
-    <p class="text-gray-400">Próximamente...</p>
-  </div>
-
-</div>
-
-<!-- Catálogos (fila aparte) -->
-<div class="mt-6">
-  <a href="../catalogos/"
-    class="block cursor-pointer bg-darkCard/90 border border-gray-700 rounded-xl p-6 text-center hover:scale-105 hover:border-green-400 transition">
-    <i class="fas fa-folder-open text-5xl text-green-400 mb-4"></i>
-    <h3 class="text-xl font-semibold text-green-400 mb-2">Catálogos</h3>
-    <p class="text-gray-400">Sube y consulta catálogos disponibles</p>
-  </a>
-</div>
-
-
-  </main>
 
   <!-- JS menú -->
   <script>
     const menuBtn = document.getElementById('menuBtn');
     const menuDropdown = document.getElementById('menuDropdown');
 
-    menuBtn.addEventListener('click', () => {
-      menuDropdown.classList.toggle('hidden');
-    });
+    if (menuBtn) {
+      menuBtn.addEventListener('click', () => {
+        menuDropdown.classList.toggle('hidden');
+      });
+    }
   </script>
+
+  <script type="module"> import { guardPage } from '../../js/auth-guard.js'; guardPage('../../index.html'); // redirige al login si no hay sesión </script>
 
 </body>
 </html>
